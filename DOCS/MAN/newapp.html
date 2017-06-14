@@ -1,0 +1,127 @@
+<HTML>
+<HEAD>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFF70" LINK="#0000FF" VLINK="#000088" ALINK="#CCCCFF">
+
+<TABLE width="100%" border=2 bgcolor="#000000">
+<TR><TH align=center><FONT color=#00FF00">
+<H2>User Guide Part 5:  Creating Your Own Application </H2>
+</FONT>
+<BR><FONT color=#FF0000>Author: John Hayes</FONT>
+</TH></TR>
+</TABLE>
+<BR>
+<BR>
+<H3>The Problem Generator Subroutine</H3>
+
+A new application is created via the construction of a problem generator
+subroutine which is identified in subroutine <b>setup</b> by the
+CPP macro "PROBLEM".  During compilation, the C preprocessor searches
+for the string PROBLEM and replaces it with the name of the appropriate
+subroutine specified in the Makefile via "-DPROBLEM=..." in the
+ZMP_CPP command line.  The tar file is shipped with the Makefile written
+to define <b>blast</b> as the subroutine of choice. A second macro,
+PROBRES, defines the name of a subroutine to be called if this application
+is to be continued from a restart file.  As an example, I will discuss
+the <b>rshock</b> subroutine as a simple example of how to construct an application.
+
+<BR>
+<H3>Module Declaration</H3>
+
+Because this version of ZEUS-MP follows a basic Fortran 90 programming
+model, F77-style INCLUDE statements have been dropped in favor of
+F90 USE statements which refer to modules that serve the analogous
+function of the INCLUDE files in F77 codes.  The modules
+referenced by these USE statements are collected in the source
+file mod_files.F, which is the first file processed during
+compilation.  Of the modules listed in rshock.F, <b>real_prec,
+config, param, grid, field, root, bndry, and mpipar</b> should be
+regarded as mandatory for your generator regardless of the physics
+set you wish to include.  The CPP #ifdef-#else-#endif construction
+enclosing <b>mpiyes and mpino</b> must also be included.  The <b>radiation
+and opac</b> modules are needed if radiation is to be included in your
+problem.
+
+<p>
+Looking underneath the module list in rshock.F, you will notice what I regard
+as the most important line in any Fortran code:
+
+<p>
+implicit NONE
+
+<p>
+Always, ALWAYS, <b>ALWAYS</b> include this line in every fortran subroutine
+you write!  This is the single most effective bug-filter available to you.
+End of editorial.
+
+<p>
+<H3>Reading the PGEN Namelist</H3>
+
+The first task of the Problem Generator subroutine is naturally to read
+the user-customized PGEN namelist containing all parameters unique
+to the application.  The READ statement is enclosed by a Fortran
+IF-ENDIF construct which tells the code that, in the case of a
+parallel calculation, only the "root" process (myid_w = 0) should
+execute the READ statement.  Inside the Fortran IF-ENDIF is a
+CPP #ifdef-#endif construct that hides MPI-specific code from
+the compiler if the macro MPI_USED is not defined in the Makefile.
+If this macro has been defined, then the enclosed code ensures
+that data read by the root process is broadcast to all the 
+other processes in a parallel calculation.
+
+<p>
+<H3>Initializing Field Variables and Boundary Variables</H3>
+
+Once the PGEN namelist has been read, the main job of the
+Problem Generator routine is to initialize ZEUS-MP's field
+arrays for density ("d"), gas energy density ("e"), and
+the three components of velocity ("v1," "v2," and "v3").
+If magnetic fields were included, one would also need to
+specify initial values of b1, b2, and b3.  Because this
+problem includes radiation, we need to initialize "er,"
+the radiation energy density.
+
+<p>
+This problem also makes use of prescribed constant boundary values
+along the outer 1-boundary.  In either of the two zmp_inp files
+that can be used with the <b>rshock</b> problem generator, zmp_inp.subrshk
+and zmp_inp.suprshk (<i>sub</i>critical and <i>super</i>critical
+radiating shocks, respectively), the OIB boundary value namelist 
+specifies that "inflow" boundary conditions are to be applied on
+the outer I boundary (nois(1)=nois(2)=3).  Setting nois(1)=3
+means that the hydro module will use prescribed values of density,
+gas energy density, and velocity at the outer boundary.  Setting
+nois(2)=3 further specifies that the radiation module will also
+rely on a prescribed value for er in the outer boundary cells.
+
+<p>
+The outer boundary values for density, gas energy, and 3 velocity
+components are fed into the code directly from the zmp_inp file
+via fois(1), fois(2), and fois(3-5), respectively.  The value
+of fois(2) is interpreted by <b>rshock</b> as a material temperature
+from which the boundary value of gas energy is derived.  Rather
+than specifying the boundary radiation energy in zmp_inp, subroutine
+<b>rshock</b> computes fois(12) internally from the value for
+gas temperature.  Because the initial model is constructed in
+radiative equilibrium, the gas and radiation temperatures will
+be identical, so it makes sense to compute fois(12) inside <b>rshock</b>
+rather than specifying it independently in zmp_inp.
+
+<p>
+With the field variables and required boundary conditions determined,
+the problem is initialized.  The file rshock.F contains
+a second subroutine, <b>rshockres</b>, which would be called in
+place of <b>rshock</b> if the calculation were picked up from a
+restart file.  When a calculation is begun from scratch, subroutine
+<b>mstart</b> calls subroutine <b>setup</b>, with then calls 
+subroutine PROBLEM (your problem generator) to configure the application.
+When a calculation is begun from a restart dump (irestart=1 in namelist
+rescon), subroutine <b>mstart</b> calls <b>restart</b> in place of
+<b>setup</b>; subroutine <b>restart</b> calls subroutine PROBRES --
+your problem-restart routine -- in place of PROBLEM.  As with the
+macro PROBLEM, PROBRES is specified in the ZMP_CPP line in the Makefile.
+
+
+</BODY>
+</HTML>

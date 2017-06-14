@@ -1,0 +1,72 @@
+#=======================================================================
+#
+#
+#  MAKEFILE FOR ZMP-PP (Seaborg)
+#
+#
+#-------------------  macro definitions  -------------------------------
+#
+ZMP_EXE    = ../exe90/
+ZMP_FC     = xlf90 -qfixed=72 -q64
+ZMP_MOD    = ../src90
+ZMP_OPTS   = -c -O3 -qtune=auto -qarch=auto -qstrict
+#ZMP_OPTS   = -c -g -qflttrap=zero:inv:ov:en -qcheck -qwarn64
+ZMP_CC     = cc -c -q64
+ZMP_LDR    = xlf90 -q64
+ZMP_LIB    = ${HDF}
+ZMP_CPP    = /lib/cpp
+#--------------------  implicit rules  ---------------------------------
+#
+.SUFFIXES: .F .f .c .o
+
+.f.o:
+	${ZMP_CPP} -P -I../src90/ $*.F | tr -s "" "\012" > $<
+	${ZMP_FC} -I ${ZMP_MOD} ${ZMP_OPTS} $<
+
+.F.o:
+	${ZMP_CPP} -P -I../src90/ $< | tr -s "" "\012" > $*.f
+	${ZMP_FC} -I ${ZMP_MOD} ${ZMP_OPTS} $*.f
+
+.c.o:
+	${ZMP_CC} -I../src90/ $<
+#
+#-------------------  Fortran object files  ----------------------------
+#
+FOBJ = zmp_pp.o h4splice.o auto_h4.o h5splice.o auto_h5.o
+#
+#-------------------  C object files  ----------------------------------
+#
+COBJ =
+#
+#---------------------  targets  ---------------------------------------
+#
+help:
+        @echo Type "'make help'             to see this menu"
+        @echo Type "'make compile           to create executable
+        @echo Type "'make clean'            to remove '*.f' and '*.o' files"
+#
+#-----------------------------------------------------------------------
+#
+clean:
+        echo "\rm -f *.o *.f"
+        \rm -f *.o *.f
+#
+#-----------------------------------------------------------------------
+#
+compile: ${ZMP_EXE}zmp_pp.x
+
+${ZMP_EXE}zmp_pp.x: ${FOBJ} ${COBJ}
+        ${ZMP_LDR} -o ${ZMP_EXE}zmp_pp.x ${FOBJ} ${COBJ} ${ZMP_LIB}
+
+#
+#----------------------  dependencies  ---------------------------------
+#
+zmp_pp.o: zmp_pp.F ../src90/mod_files.o
+
+h4splice.o: h4splice.F ../src90/mod_files.o
+
+h5splice.o: h5splice.F ../src90/mod_files.o
+
+auto_h4.o: auto_h4.F ../src90/mod_files.o
+
+auto_h5.o: auto_h5.F ../src90/mod_files.o

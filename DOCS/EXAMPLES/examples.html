@@ -1,0 +1,124 @@
+<HTML>
+<HEAD>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFF70" LINK="#0000FF" VLINK="#000088" ALINK="#CCCCFF">
+
+<A NAME="top">
+<CENTER>
+<TABLE width="100%" border=2 bgcolor="#000000">
+<TR><TH align=center><FONT color="#00FF00">
+<H2>User Guide Part 6:  Example Calculations</H2>
+</FONT>
+<BR><FONT color=#FF0000>Author: John Hayes</FONT>
+</TH></TR>
+</TABLE>
+</CENTER>
+
+<br>
+<br>
+<table width="100%" border=2 bgcolor="#000000">
+<tr><th align=center><font color="#FF0000">
+<h4>Overview</h4>
+</font></th></tr>
+</table>
+
+<P>
+This section presents results from 4 different sample calculations, each
+of which is hyperlinked from the sub-menu on the left.  The first two
+calculations are "blast wave" problems in which a strongly overpressured
+spherical balls expands into a low-density surrounding medium.  Each of
+these is done in two dimensions and distributed across 4 processors.
+The first calculation is pure gas dynamics; the second adds an initially
+uniform magnetic field to the problem.  Data is dumped in HDF format;
+the "zmp_pp.x" post-processing executable is used to assemble the individual
+per-process data blocks into one global data dump.
+
+<p>
+The third test is the pressureless collapse problem documented in
+Paper I of the ZEUS-2D trilogy (<b>ApJ</b> Supplment; Volume 80).
+This test is included as an example in which self-gravity is included.
+Data is dumped in ASCII format; the problem is run on one processor.
+
+<p>
+The fourth problem is a 1-D RHD problem following the evolution
+of supercritical radiating shocks.  Data is dumped in ASCII format;
+the problem is run on 1 processor.
+
+<br>
+<br>
+<table width="100%" border=2 bgcolor="#000000">
+<tr><th align=center><font color="#FF0000">
+<h4>Post-Processing HDF files</h4>
+</font></th></tr>
+</table>
+
+<P>
+When HDF data is dumped, one assemble the data files written at one time
+slice from each processor into a global data file using the "zmp_pp.x"
+post-processing executable.  The source code for the processor is located
+in the <b>zeusmp2/pp</b> subdirectory.  To build the code, simply type
+"make compile" -- the executable is placed in <b>exe90</b> along with
+zeusmp.x.
+
+<p>
+To run the post-processor, simply type "zmp_pp.x" and follow the on-screen
+directions.  An example screen session from the assembly of files for the
+blast wave calculation is provided in <a href="./zmp_pp_tty.txt">this text
+file</a>. In this example, I typed "hsplice" as the task to perform.  The
+code then printed information about file ID, the number of tiles to assemble,
+and the number of zones in each tile.  The HSPLICE subprogram then asked
+for the dump number of the files to assemble.  There are only two, with
+".000" and ".001" suffices.  It is sufficient to enter only the number of
+digits needed to identify the number.  After having processed both data
+dumps, I then entered "-1" to quit the HSPLICE subprogram, and then I
+typed "quit" to exit the post-processor.
+
+<p>
+In both blast wave problems, the zmp_inp file is configured to run on
+four processors, with the both the 1- and 2-coordinates distributed
+over processors.  The file was further configured (in namelist IOCON)
+so that HDF dumps are written at the beginning and end of the calculation
+with no intermediate dumps.  We therefore have two sets of HDF files
+at the end of the calculation, which runs to an evolution time of 0.005
+seconds:
+
+<br>
+<center>
+<TABLE border=1 cellpadding=5 cellspacing=5>
+<TR>
+<TH align=center colspan=2>HDF Data Dumps</TH>
+</TR>
+<tr>
+<th> Time = 0.000 </th> <th> Time = 0.005 </th>
+</tr>
+<tr>
+<td>
+<ul>
+   <li> hdfaa000000.000
+   <li> hdfaa010000.000
+   <li> hdfaa000100.000
+   <li> hdfaa010100.000
+</ul>
+</td>
+<td>
+<ul>
+   <li> hdfaa000000.001
+   <li> hdfaa010000.001
+   <li> hdfaa000100.001
+   <li> hdfaa010100.001
+</ul>
+</td>
+</tr>
+</table>
+</center>
+
+<br>
+<br>
+<p>
+Use of zmp_pp.x as shown in the screen session results in two global data files:
+"hdfaa.000" and "hdfaa.001".  These data files can then be visualized as the user
+sees fit.
+
+</BODY>
+</HTML>

@@ -1,0 +1,51 @@
+ &GEOMCONF  LGEOM=1, 
+            LDIMEN=1 /
+ &PHYSCONF  LRAD=1, 
+            LEOS=1,
+            NSPEC=1,
+            XHYDRO=.false., 
+            XFORCE=.false., 
+            XMHD=.false.,
+            XTOTNRG=.false.,
+            XGRAV=.false., 
+            XGRVFFT=.false., 
+            XSPHGRV=.false., 
+            XPTMASS=.false., 
+            XISO=.false., 
+            XSUBAV=.false., 
+            XVGRID=.false. /
+ &IOCONF    XASCII=.TRUE., 
+            XHDF=.false., 
+            XRESTART=.false., 
+            XTSL=.false. /
+ &PRECONF   SMALL_NO=1.0D-99, 
+            LARGE_NO=1.0D+99 /
+ &ARRAYCONF IZONES=64, 
+            JZONES=1, 
+            KZONES=1, 
+            MAXIJK=64 /
+ &mpitop ntiles(1)=8,ntiles(2)=1,ntiles(3)=1,periodic=.false.,2*.true. /
+ &rescon /
+ &pcon nlim=1000000, tlim=3.3e-11, cpulim=36000.0, mbatch=1 /
+ &hycon qcon=2.0,courno=0.5,dtrat=1.0e-08,dfloor=1.0,erfloor=1.0e-10 /
+ &iib niis(1)=2,niis(2)=3,fiis(12)=1.0 /
+ &oib nois(1)=2,nois(2)=2 /
+ &ijb nijs(1)=2,nijs(2)=1 /
+ &ojb nojs(1)=2,nojs(2)=1 /
+ &ikb niks(1)=2,niks(2)=1 /
+ &okb noks(1)=2,noks(2)=1 /
+ &ggen1 nbl=512,x1min=0.0,x1max=1.0,igrid=1,x1rat=1.,lgrid=.true. /
+ &ggen2 nbl=  1,x2min=0.0,x2max=1.0,igrid=1,x2rat=1.,lgrid=.true.  /
+ &ggen3 nbl=  1,x3min=0.0,x3max=1.0,igrid=1,x3rat=1.,lgrid=.true.  /
+ &grvcon /
+ &radcon ifld=1,nmeiter=20,epsme=1.0e-4,epsrad=1.0e-8,radth=1.0,cnvcrit=2,
+         ernom=1.d0,ennom=1.d0,epsmaxd=0.05,
+         cgerrcrit=1,ipcflag=2,xnu=0.0,powr=0.0,rho0=1.0,
+         t_0=1.0,rmfp0=1.0e2/
+ &eqos gamma=1.6666667,mmw=1.0d0 /
+ &pgen idirect=1,amp=0.0D0 /
+ &gcon /
+ &iocon dthdf=0.0e0, dtusr=1.0e0,
+  t_out(1)=1.0e-11, t_out(2)=2.0e-11, t_out(3)=3.0e-11,
+  t_out(4)=3.2e-11, t_out(5)=3.33e-11, t_out(6)=6.66e-11,
+  t_out(7)=1.0e-10, t_out(8)=3.0e-10/

@@ -1,0 +1,95 @@
+<HTML>
+<HEAD>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFF70" LINK="#0000FF" VLINK="#000088" ALINK="#CCCCFF">
+
+<TABLE width="100%" border=2 bgcolor="#000000">
+<TR><TH align=center><FONT color=#00FF00">
+<H2>User Guide Part 4:  Running ZEUS-MP </H2>
+</FONT>
+<BR><FONT color=#FF0000>Author: John Hayes</FONT>
+</TH></TR>
+</TABLE>
+<BR>
+<BR>
+<H3>The Basics</H3>
+
+The ZEUS-MP binary executable is called "zeusmp.x" and is located under
+<b>zeusmp2/exe90</b>.  The only input file required by the test problems
+supplied is "zmp_inp", the input parameter file documented at length
+in Part 3 of this user guide.  If the code is compiled as a serial
+code, then simply typing "zeusmp.x" at the terminal prompt will launch
+the code.  In the more common case of parallel execution, the method
+of launching the code is -- as experienced users are well aware --
+entirely dependent upon the platform.  I will therefore leave it up
+the to User to determine how to launch a job on his platform of choice.
+
+<BR>
+<H3>Execution Status</H3>
+
+ZEUS-MP is wired to write some information to the TTY as a calculation
+progresses.  A parameter called <b>mbatch</b> read in namelist PCON
+allows the user to interactively query the code's status if mbatch=0.
+<B>I DO NOT RECOMMEND USING THIS FEATURE,</B> reason being that on
+the IBM SP computers, accidently leaving mbatch=0 when a job is run in
+batch mode will cause all Hell to break loose and zillions of "illegal
+character" complaints to be generated during code execution.  I don't
+understand why this happens, and I'm far too lazy to care.  If you like
+to live dangerously and wish to learn more about this feature, look in
+the subroutine <b>intchk.F</b> in the <b>src90</b> subdirectory to see what
+the legal prompt commands are.  When radiation transport is turned off,
+a block of code in <b>zeusmp.F</b> periodically writes information on
+cycle number, evolution time, and timestep to TTY.  When radiation
+transport is turned on, a block of code at the bottom of <b>grey_fld.F</b>
+is active instead, writing cycle/time/timestep information and information
+on (1) how many Newton-Raphson iterations were required to solve the coupled
+radiation-energy equations, and (2) the average number of conjugate gradient
+linear solver iterations were needed for each N-R iteration.  Yes, some of
+us actually care about that.
+
+<p>
+ZEUS-MP also writes some information in a log file called "zmp_log".  If
+all goes well in a calculation, this file will only contain the values of
+all the parameters in the <b>zmp_inp</b> input namelists as they have been
+read in.  If the code has numerical difficulty and has to cut the timestep
+size, some information about this will be logged in this file.  This will
+be familiar to users of ZEUS-3D.
+
+<P>
+<H3>Output Data Files</H3>
+
+ZEUS-MP follows the convention that, regardless of the type of output
+file being written, each processor in a parallel calculation writes
+its private data to a unique file.  For example, if HDF files are
+being written (XHDF4 = .TRUE.), then an 8-processor calculation
+will dump 8 files every time an HDF dump is performed.  As an
+example, suppose that a 3D calculation was distributed across
+8 processors so each coordinate axis was distributed over 2
+processors. In this case, NTILES = 2 for each axis.  ZEUS-MP
+imagines that these processors are arranged in a 3D "processor
+coordinate system" in which each processor has a unique
+set of coordinates in this system.  Our 8 processors would
+therefore have coordinate values of (0,0,0), (1,0,0), (0,1,0),
+(1,1,0), (0,0,1), (1,0,1), (0,1,1), and (1,1,1).  Each
+element in the coordinate triple is stored in ZEUS-MP in the
+3-element array COORDS.  For each processor, COORDS(1), COORDS(2),
+and COORDS(3) collectively locate this processor in "process
+topology," as it is officially known.
+
+<p>
+A processor's unique set of COORDS values is used to label the
+output files it writes.  In our example, the processor with
+COORDS = (0,0,0) will write hdf files named "hdfaa000000.XXX",
+where 2 digits have been allowed for each value of COORDS, and
+XXX is a numeric string giving the dump number (which begins with "000").  The first
+dump in the simulation will write 8 files: hdfaa000000.000, hdfaa010000.000,
+hdfaa000100.000, hdfaa010100.000, hdfaa000001.000, hdfaa010001.000, hdfaa000101.000,
+and hdfaa010101.000.
+
+<p>
+You get the idea.  This convention is followed for all 3 data formats: HDF4
+("hdfaa...."), ASCII ("usraa..."), and binary restart files ("resaa....").
+
+</BODY>
+</HTML>

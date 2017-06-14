@@ -1,0 +1,4 @@
+If linking with HDF5, be sure the serial HDF5 library
+is selected if your platform offers both the serial
+and parallel libraries.  This ensures compatibility
+with the Makefiles, which use serial Fortran compilers.

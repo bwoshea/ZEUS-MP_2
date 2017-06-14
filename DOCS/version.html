@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <base target="display">
+</head>
+<body style="color: rgb(0, 0, 0); background-color: rgb(102, 204, 204);"
+ alink="#ccccff" link="#0000ff" vlink="#000088">
+<table _base_target="display" bgcolor="#000000" border="2" width="100%">
+  <tbody _base_target="display">
+    <tr _base_target="display">
+      <th _base_target="display" align="center"><font color="#00f000">
+      <h2>Public Release Version History</h2>
+      </font></th>
+    </tr>
+  </tbody>
+</table>
+<ul>
+  <li> December 14, 2005: ZEUS-MP 2.0.2 released with the following
+       corrections:
+       <ol>
+          <li>Subroutines <b>msave</b> and <b>mget</b> (file <b>msave.F</b>):
+              increased value of parameter "nfieldr" to accommodate sufficient
+              storage for multi-species abundance array "abun" in restart
+              dump files.</li>
+          <li>Subroutine <b>spherical_gravity</b> (file <b>gravity.F</b>):
+              deleted an errant reference to an uninitialized (and unnecessary)
+              variable in the formula for "dml".</li>
+          <li>Files <b>auto_hsplice.F</b>, <b>hsplice.F</b>, and <b>zmp_pp.F</b>
+              in directory <b>zeusmp2/pp</b>: relocated misplaced "implicit NONE"
+              statements. </li>
+          <li>Updated version information in subroutine <b>options</b>. </li>
+       </ol>
+  </li>
+  <li> November 28, 2005: ZEUS-MP 2.0.1 released with following
+       additions/corrections:
+    <ol>
+      <li>Added Makefile.linux, Makefile.cita.mckenzie</li>
+      <li>Corrected FFT file references in Makefiles</li>
+      <li>Added "#ifdef FFT" CPP constructs in <b>fftwgrav.F</b> and
+          <b>gravity.F</b> to hide FFT references from the compiler
+          when the CPP macro FFT is not defined in the Makefile.</li>
+      <li>Added "#ifdef MPI_USED" CPP construct in newvg.F to hide MPI
+calls when MPI_USED is not defined in Makefile.</li>
+      <li>Relocated "implicit NONE" statements in subroutines <b>rotor</b>
+and <b>rotorres</b> in file <b>rotor.F</b>. </li>
+      <li>Modified the CPP "ARCH" macro constructs in clocks.F and
+          intchk.F</li>
+      <li>Corrected FD_SET syntax in file <b>checkin.c</b>.</li>
+      <li>Updated release date in file <b>options.F</b>.</li>
+      <li>Corrected inverted array indices in <b>xtwid</b> array in
+file <b>tranx3.F</b>. </li>
+      <li>Added comments to files <b>grav2dcg.F</b> and <b>grav3dcg.F</b>
+on use of computed vs input boundary condition values for gravitational
+potential.</li>
+    </ol>
+  </li>
+  <li> November 16, 2005: ZEUS-MP 2.0.0 released </li>
+</ul>
+<table _base_target="display" bgcolor="#000000" border="2" width="100%">
+  <tbody _base_target="display">
+    <tr _base_target="display">
+      <th _base_target="display" align="center"><font color="#00f000">
+      <h2>Restricted Beta Version ``Pre-History''</h2>
+      </font></th>
+    </tr>
+  </tbody>
+</table>
+<ul>
+  <li> October, 2005: added special CPP macros for test problems to
+customize output and (in the marshak wave and aligned rotor problems)
+equations solved. </li>
+  <li> October, 2005: returned linear viscosity option to avisc.F </li>
+  <li> October, 2005: corrected typos in tranx1.F and tranx3.F in
+multispecies advection loops. </li>
+  <li> September - October, 2005: updated test suite, adding marshak
+wave, Brio and Wu MHD shock tube, Orszag-Tang Vortex, MHD aligned
+rotor, and Noh shock test. </li>
+  <li> September - October, 2005: added 1D MHD module for problems with
+J and K symmetry; corrected 2D MHD module for problems with K symmetry.
+Corrected hydro modules to ensure consistency with symmetry
+assumptions. </li>
+  <li> August 3, 2005: Corrected copy of zmp_inp.sedov in zeusmp2/test
+directory. </li>
+  <li> July 15, 2005: Updated version number and date in options.F </li>
+  <li> July 15, 2005: Bug fix in tranx3.F: restored metric coefficients
+which multiply "xi" expression in advection formulae. </li>
+  <li> June 24, 2005: ZEUS-MP 2.0 Beta released. </li>
+</ul>
+</body>
+</html>

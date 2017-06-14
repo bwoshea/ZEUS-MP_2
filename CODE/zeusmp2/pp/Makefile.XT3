@@ -1,0 +1,72 @@
+#=======================================================================
+#
+#
+#  MAKEFILE FOR ZMP-PP (XT3)
+#
+#
+#-------------------  macro definitions  -------------------------------
+#
+ZMP_EXE    = ../exe90/
+ZMP_FC     = pgf90 -Mfixed -r8
+ZMP_MOD    = ../src90
+ZMP_OPTS   = -c -O3 -Munroll=c:1 -Mnoframe -Mlre
+ZMP_CC     = cc -target=catamount -tp k8-64
+ZMP_LDR    = pgf90 -r8
+ZMP_LIB    = ${HDF5_FLIB}
+ZMP_CPP    = -F -DUSE_HDF5 -DARCH_CRAY
+#--------------------  implicit rules  ---------------------------------
+#
+.SUFFIXES: .F .f .c .o
+
+.f.o:
+	${ZMP_FC} ${ZMP_CPP} $*.F
+	${ZMP_FC} -I ${ZMP_MOD} ${ZMP_OPTS} $*.f ${HDF5_FLIB}
+
+.F.o:
+	${ZMP_FC} ${ZMP_CPP} $*.F
+	${ZMP_FC} -I ${ZMP_MOD} ${ZMP_OPTS} $*.f ${HDF5_FLIB}
+
+.c.o:
+	${ZMP_CC} -I../src90/ $<
+#
+#-------------------  Fortran object files  ----------------------------
+#
+FOBJ = zmp_pp.o h4splice.o auto_h4.o h5splice.o auto_h5.o
+#
+#-------------------  C object files  ----------------------------------
+#
+COBJ = 
+#
+#---------------------  targets  ---------------------------------------
+#
+help:
+	@echo Type "'make help'             to see this menu"
+	@echo Type "'make compile           to create executable
+	@echo Type "'make clean'            to remove '*.f' and '*.o' files"
+#
+#-----------------------------------------------------------------------
+#
+clean:
+	echo "\rm -f *.o *.f"
+	\rm -f *.o *.f
+#
+#-----------------------------------------------------------------------
+#
+compile: ${ZMP_EXE}zmp_pp.x
+
+${ZMP_EXE}zmp_pp.x: ${FOBJ} ${COBJ}
+	${ZMP_LDR} -o ${ZMP_EXE}zmp_pp.x ${FOBJ} ${COBJ} ${ZMP_LIB}
+
+#
+#----------------------  dependencies  ---------------------------------
+#
+zmp_pp.o: zmp_pp.F ../src90/mod_files.o
+
+h4splice.o: h4splice.F ../src90/mod_files.o
+
+h5splice.o: h5splice.F ../src90/mod_files.o
+
+auto_h4.o: auto_h4.F ../src90/mod_files.o
+
+auto_h5.o: auto_h5.F ../src90/mod_files.o
+

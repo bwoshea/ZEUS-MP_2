@@ -1,0 +1,1225 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+</head>
+<body style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 112);"
+ alink="#ccccff" link="#0000ff" vlink="#000088">
+<a name="top">
+</a>
+<table bgcolor="#000000" width="100%" border="2">
+  <tbody>
+    <tr>
+      <th align="center"><font color="#00f000">
+      <h2>User Guide Part 3: Configuring ZEUS-MP for Execution </h2>
+      </font> <br>
+      <font color="#ff0000">Author: John Hayes</font> </th>
+    </tr>
+  </tbody>
+</table>
+<p>
+Like ZEUS-2D and the 1.0 release of ZEUS-MP, this version
+of ZEUS-MP
+uses an input file to configure the calculation and determine a host
+of run-time parameters. Called "zmp_inp", this file lives along with
+the executable (zeusmp.x) in the zeusmp2/exe90 directory. zmp_inp is
+a collection of namelists; users of the 1.0 version will note that the
+collection of namelists has been considerably expanded in this release.
+This is because nearly all of the CPP macros used to configure the
+code in the previous release have been abandoned in favor of integer
+and logical control parameters than can be set at execution time.
+The first five namelists in zmp_inp contain real, integer, and logical
+control parameters serving the configuration functions formerly
+performed by entries in the "zeusmp.def" macro file used by Version 1.
+This page itemizes the contents of the zmp_inp file and describes the
+function of each parameter. The parameters are tabulated by namelist;
+where appropriate, a "remarks" section follows the corresponding
+table.
+</a></p>
+<hr size="5" width="100%"><a name="geom">
+</a>
+<p>
+<table border="5" cellpadding="5" cellspacing="5">
+  <tbody>
+    <tr>
+      <th colspan="4" align="center">Namelist GEOMCONF</th>
+    </tr>
+    <tr>
+      <th>Parameter</th>
+      <th>Data Type</th>
+      <th> Attribute </th>
+      <th>Valid Values</th>
+    </tr>
+    <tr>
+      <td>LDIMEN</td>
+      <td>Integer</td>
+      <td> Problem Dimensionality </td>
+      <td>1 (Cartesian), 2 (Cylindrical), or
+3 (Spherical) </td>
+    </tr>
+    <tr>
+      <td>LGEOM</td>
+      <td> Integer </td>
+      <td> Grid Geometry </td>
+      <td> 1, 2, or 3</td>
+    </tr>
+  </tbody>
+</table>
+<a name="geom"><br>
+<br>
+</a></p>
+<hr size="5" width="100%"><a name="phys">
+</a>
+<p>
+<table border="5" cellpadding="5" cellspacing="5">
+  <tbody>
+    <tr>
+      <th colspan="5" align="center">Namelist PHYSCONF</th>
+    </tr>
+    <tr>
+      <th>Parameter</th>
+      <th>Data Type</th>
+      <th> Attribute </th>
+      <th>Valid Values</th>
+      <th> Notes </th>
+    </tr>
+    <tr>
+      <td> LRAD </td>
+      <td> Integer </td>
+      <td> radiation toggle </td>
+      <td> 0 (no radiation) or 1 (FLD) </td>
+    </tr>
+    <tr>
+      <td> LEOS </td>
+      <td> Integer </td>
+      <td> equation of state toggle </td>
+      <td> 1 (user may add more) </td>
+      <td> See <b>PHYS_Remarks (1)</b> </td>
+    </tr>
+    <tr>
+      <td> NSPEC </td>
+      <td> Integer </td>
+      <td> total number of fluid species </td>
+      <td> 1 or higher </td>
+    </tr>
+    <tr>
+      <td> XHYDRO </td>
+      <td> Logical </td>
+      <td> spatial advection toggle </td>
+      <td> .TRUE. or .FALSE. </td>
+      <td> See <b>PHYS_Remarks (2)</b> </td>
+    </tr>
+    <tr>
+      <td> XFORCE </td>
+      <td> Logical </td>
+      <td> body force toggle </td>
+      <td> .TRUE. or .FALSE. </td>
+      <td> See <b>PHYS_Remarks (2)</b> </td>
+    </tr>
+    <tr>
+      <td> XMHD </td>
+      <td> Logical </td>
+      <td> MHD toggle </td>
+      <td> .TRUE. or .FALSE. </td>
+    </tr>
+    <tr>
+      <td> XTOTNRG </td>
+      <td> Logical </td>
+      <td> Evolve total energy </td>
+      <td> .TRUE. or .FALSE. </td>
+      <td> See <b>PHYS_Remarks (3)</b> </td>
+    </tr>
+    <tr>
+      <td> XGRAV </td>
+      <td> Logical </td>
+      <td> Gravity toggle</td>
+      <td> .TRUE. or .FALSE. </td>
+      <td> See <b>PHYS_Remarks (4)</b> </td>
+    </tr>
+    <tr>
+      <td> XGRVFFT </td>
+      <td> Logical </td>
+      <td> Enable FFTW gravity solver </td>
+      <td> .TRUE. or .FALSE. </td>
+      <td> See <b>PHYS_Remarks (4)</b> </td>
+    </tr>
+    <tr>
+      <td> XSPHGRV </td>
+      <td> Logical </td>
+      <td> Assume GM/r potential </td>
+      <td> .TRUE. or .FALSE. </td>
+      <td> See <b>PHYS_Remarks (4)</b> </td>
+    </tr>
+    <tr>
+      <td> XPTMASS </td>
+      <td> Logical </td>
+      <td> Point-mass potential </td>
+      <td> .TRUE. or .FALSE. </td>
+      <td> See <b>PHYS_Remarks (4)</b> </td>
+    </tr>
+    <tr>
+      <td> XISO </td>
+      <td> Logical </td>
+      <td> Isothermal EOS </td>
+      <td> .TRUE. or .FALSE. </td>
+      <td> See <b>PHYS_Remarks (1)</b> </td>
+    </tr>
+    <tr>
+      <td> XSUBAV </td>
+      <td> Logical </td>
+      <td> Sub-cycle artificial viscosity </td>
+      <td> .TRUE. or .FALSE. </td>
+    </tr>
+    <tr>
+      <td> XVGRID </td>
+      <td> Logical </td>
+      <td> moving grid toggle </td>
+      <td> .TRUE. or .FALSE. </td>
+      <td> See <b>PHYS_Remarks (5)</b> </td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<h4><a name="phys">PHYS_Remarks:</a></h4>
+<ol>
+  <a name="phys"> <li> The LEOS equation of state toggle selects
+between gamma-law equations of state (LEOS = 1) and whatever a user may
+wish to implement as an alternative (LEOS &gt; 1). The isothermal case
+(gamma = 1) requires that LEOS = 1 <b>and</b> XISO be set to .TRUE.,
+as the isothermal case is treated as a special case in the code. <br>
+    <br>
+  </li>
+  <li> The existence of both the XHYDRO and XFORCE switches is
+primarily a debugging tool, but a useful one. Setting XHYDRO to .TRUE.
+and XFORCE to .FALSE. reduces the calculation to one of pure advection.
+The converse case is not physically meaningful. Setting both of these
+switches to .FALSE., however, allows calculations of radiation
+transport through static media to be performed with a minimum of CPU
+cost. <br>
+    <br>
+  </li>
+  <li> If XTOTNRG is set to .TRUE., then the ZEUS-MP field array,
+"e(i,j,k)" is used to store the total gas energy rather than the
+internal energy. <b>This option is not valid if radiation, gravity, or
+magnetic fields are present.</b> <br>
+    <br>
+  </li>
+  <li> The gravity switches are designed around the following logic:
+    <ul>
+      <li> XGRAV and XGRVFFT are "top-level" switches that decide
+whether gravity -- by any means other than a point-mass potential -- is
+computed at all. <b>XGRVFFT is reserved for 3D cartesian grids with
+triply-periodic problems.</b> For other general potential problems (2D
+or 3D), set XGRAV to .TRUE. and XGRVFFT to .FALSE. </li>
+      <li> A GM/r potential may be used in 1D or 2D by setting XGRAV
+and XSPHGRV to .TRUE. </li>
+      <li> The point-mass potential is treated is as a special case. If
+a point-mass potential is desired, set XPTMASS to .TRUE. and XGRAV,
+XGRVFFT, and XSPHGRV to .FALSE. </li>
+    </ul>
+    <br>
+  </li>
+  <li> The moving grid has only been fully implemented for <b>parallel
+execution</b> for the case of grid motion along the 1-axis. </li>
+  </a>
+</ol>
+<a name="phys"><br>
+</a>
+<hr size="5" width="100%"><a name="ioconf"></a>
+<p>
+<table border="5" cellpadding="5" cellspacing="5">
+  <tbody>
+    <tr>
+      <th colspan="5" align="center">Namelist IOCONF</th>
+    </tr>
+    <tr>
+      <th>Parameter</th>
+      <th>Data Type</th>
+      <th> Attribute </th>
+      <th>Valid Values</th>
+      <th> Notes </th>
+    </tr>
+    <tr>
+      <td> XASCII </td>
+      <td> Logical </td>
+      <td> ASCII dump file toggle </td>
+      <td> .TRUE. or .FALSE. </td>
+      <td>See <b>IOCONF_Remarks (1)</b> </td>
+    </tr>
+    <tr>
+      <td> XHDF4 </td>
+      <td> Logical </td>
+      <td> HDF4 dump file toggle </td>
+      <td> .TRUE. or .FALSE. </td>
+      <td>See <b>IOCONF_Remarks (2)</b> </td>
+    </tr>
+    <tr>
+      <td> XRESTART </td>
+      <td> Logical </td>
+      <td> Restart dump file toggle </td>
+      <td> .TRUE. or .FALSE. </td>
+      <td>See <b>IOCONF_Remarks (3)</b> </td>
+    </tr>
+    <tr>
+      <td> XHDF5 </td>
+      <td> Logical </td>
+      <td> HDF5 dump file toggle </td>
+      <td> .TRUE. or .FALSE. </td>
+      <td> HDF5 Dumps Not implemented </td>
+    </tr>
+    <tr>
+      <td> XTSL </td>
+      <td> Logical </td>
+      <td> "Time Slice" dump file toggle </td>
+      <td> .TRUE. or .FALSE. </td>
+      <td> Not implemented </td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<h4><a name="ioconf">IOCONF_Remarks</a></h4>
+<ol>
+  <a name="ioconf"> <li> If XASCII = .TRUE., then subroutine TEXTDMP
+will write output files in ASCII format. Additional controls on the
+frequency of file dumps is input via namelist IOCON. <br>
+    <br>
+  </li>
+  <li> If XHDF4 = .TRUE., then subroutine HDFALL will write output
+files in HDF4 format. Additional controls on the frequency of file
+dumps is input via namelist IOCON. <br>
+    <br>
+  </li>
+  <li> If XRESTART = .TRUE., then subroutine MSAVE will write output
+files in binary format. Additional controls on the frequency of file
+dumps is input via namelist IOCON. </li>
+  </a>
+</ol>
+<a name="ioconf"><br>
+<br>
+</a>
+<hr size="5" width="100%"><a name="preconf"></a>
+<p>
+<table border="5" cellpadding="5" cellspacing="5">
+  <tbody>
+    <tr>
+      <th colspan="5" align="center">Namelist PRECONF </th>
+    </tr>
+    <tr>
+      <th>Parameter</th>
+      <th>Data Type</th>
+      <th> Attribute </th>
+      <th>Valid Values</th>
+      <th> Notes </th>
+    </tr>
+    <tr>
+      <td> SMALL_NO </td>
+      <td> Real/Double </td>
+      <td> Smallest positive real number</td>
+      <td> A REALLY small number</td>
+      <td> See remarks </td>
+    </tr>
+    <tr>
+      <td> LARGE_NO </td>
+      <td> Real/Double </td>
+      <td> Largest positive real number</td>
+      <td> A REALLY large number</td>
+      <td> See remarks </td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<h4><a name="preconf">PRECONF_Remarks</a></h4>
+<a name="preconf">SMALL_NO and LARGE_NO are used to initialize real
+arrays in ZEUS-MP
+such that underflow and overflow conditions will be avoided.
+<br>
+<br>
+<br>
+</a>
+<hr size="5" width="100%"><a name="array"></a>
+<p>
+<table border="5" cellpadding="5" cellspacing="5">
+  <tbody>
+    <tr>
+      <th colspan="5" align="center">Namelist ARRAYCONF</th>
+    </tr>
+    <tr>
+      <th>Parameter</th>
+      <th>Data Type</th>
+      <th> Attribute </th>
+      <th>Valid Values</th>
+      <th> Notes </th>
+    </tr>
+    <tr>
+      <td>IZONES</td>
+      <td> Integer </td>
+      <td> # of 1-coordinate zones per processor</td>
+      <td> 5 or more </td>
+      <td> <br>
+      </td>
+    </tr>
+    <tr>
+      <td>JZONES</td>
+      <td> Integer </td>
+      <td> # of 2-coordinate zones per processor</td>
+      <td> 8 or more </td>
+      <td> <br>
+      </td>
+    </tr>
+    <tr>
+      <td>KZONES</td>
+      <td> Integer </td>
+      <td> # of 3-coordinate zones per processor</td>
+      <td> 5 or more </td>
+      <td> <br>
+      </td>
+    </tr>
+    <tr>
+      <td>MAXIJK</td>
+      <td> Integer </td>
+      <td> MAX(izones,jzones,kzones) </td>
+      <td> MAX(izones,jzones,kzones)</td>
+      <td> <br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<a name="array"><br>
+<br>
+</a></p>
+<hr size="5" width="100%"><a name="mpitop">
+</a>
+<p>
+<table border="5" cellpadding="5" cellspacing="5">
+  <tbody>
+    <tr>
+      <th colspan="5" align="center">Namelist MPITOP</th>
+    </tr>
+    <tr>
+      <th>Parameter</th>
+      <th>Data Type</th>
+      <th> Attribute </th>
+      <th>Valid Values</th>
+      <th> Notes </th>
+    </tr>
+    <tr>
+      <td> ntiles(1) </td>
+      <td> Integer </td>
+      <td> # MPI processes spanning the 1-coordinate </td>
+      <td> &gt; 0 </td>
+      <td> <br>
+      </td>
+    </tr>
+    <tr>
+      <td> ntiles(2) </td>
+      <td> Integer </td>
+      <td> # MPI processes spanning the 2-coordinate </td>
+      <td> &gt; 0 </td>
+      <td> <br>
+      </td>
+    </tr>
+    <tr>
+      <td> ntiles(3) </td>
+      <td> Integer </td>
+      <td> # MPI processes spanning the 3-coordinate </td>
+      <td> &gt; 0 </td>
+      <td> <br>
+      </td>
+    </tr>
+    <tr>
+      <td> periodic </td>
+      <td> Logical Array(3) </td>
+      <td> Periodic B.C. Switch </td>
+      <td> .TRUE. or .FALSE. </td>
+      <td> See MPITOP_Remarks </td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<h4><a name="mpitop">MPITOP_Remarks</a></h4>
+<a name="mpitop">The MPITOP (Message-Passing Interface TOPology)
+namelist tells ZEUS-MP how many processors
+are used for the calculation and how many processors span each
+coordinate axis of the
+problem domain. Together with the array limits set forth in ARRAYCONF,
+the NTILES integers
+provide a complete description of how the problem data is subdivided
+and distributed
+over an array of parallel processors. The PERIODIC logical array is
+required by MPI as
+an identifier of coordinate axes along which periodic boundary
+conditions are used. The
+values of PERIODIC must be consisent with ZEUS-MP's BC flags specified
+in the BC namelists
+IIB, OIB, IJB, OJB, IKB, and OKB.
+<br>
+<br>
+<br>
+</a>
+<hr size="5" width="100%"><a name="rescon"></a>
+<p>
+<table border="5" cellpadding="5" cellspacing="5">
+  <tbody>
+    <tr>
+      <th colspan="5" align="center">Namelist RESCON</th>
+    </tr>
+    <tr>
+      <th>Parameter</th>
+      <th>Data Type</th>
+      <th> Attribute </th>
+      <th>Valid Values</th>
+      <th> Notes </th>
+    </tr>
+    <tr>
+      <td> IRESTART </td>
+      <td> Integer </td>
+      <td> Signifies that a run is beginning from a restart dump </td>
+      <td> 0 (do not use a restart file) or 1 (use a restart file) </td>
+    </tr>
+    <tr>
+      <td> RESFILE </td>
+      <td> Character </td>
+      <td> The name of the root process's restart file </td>
+      <td> "resaa000000.XXX", where XXX is the restart dump number </td>
+    </tr>
+  </tbody>
+</table>
+<a name="rescon"><br>
+<br>
+</a></p>
+<hr size="5" width="100%"><a name="pcon">
+</a>
+<p>
+<table border="5" cellpadding="5" cellspacing="5">
+  <tbody>
+    <tr>
+      <th colspan="5" align="center">Namelist PCON</th>
+    </tr>
+    <tr>
+      <th>Parameter</th>
+      <th>Data Type</th>
+      <th> Attribute </th>
+      <th>Valid Values</th>
+      <th> Notes </th>
+    </tr>
+    <tr>
+      <td> NLIM </td>
+      <td> Integer </td>
+      <td> Number of timesteps to execute </td>
+      <td> &gt; 0 </td>
+      <td> <br>
+      </td>
+    </tr>
+    <tr>
+      <td> TLIM </td>
+      <td> Real </td>
+      <td> Problem evolution time limit </td>
+      <td> &gt; 0.0 </td>
+      <td> <br>
+      </td>
+    </tr>
+    <tr>
+      <td> CPULIM </td>
+      <td> Real </td>
+      <td> Wall Clock CPU time limit </td>
+      <td> &gt;&gt; 0.0 </td>
+      <td> <br>
+      </td>
+    </tr>
+    <tr>
+      <td> MBATCH </td>
+      <td> Integer </td>
+      <td> Interactive status query toggle </td>
+      <td> 0 or 1</td>
+      <td> 0 is dangerous on IBM</td>
+    </tr>
+  </tbody>
+</table>
+<a name="pcon"><br>
+<br>
+</a></p>
+<hr size="5" width="100%"><a name="HYCON">
+</a>
+<p>
+<table border="5" cellpadding="5" cellspacing="5">
+  <tbody>
+    <tr>
+      <th colspan="5" align="center">Namelist HYCON</th>
+    </tr>
+    <tr>
+      <th>Parameter</th>
+      <th>Data Type</th>
+      <th> Attribute </th>
+      <th>Valid Values</th>
+      <th> Notes </th>
+    </tr>
+    <tr>
+      <td> QCON </td>
+      <td> Real </td>
+      <td> Neumann-Richtmeyer Artificial Viscosity Coefficient </td>
+      <td> 0 or higher </td>
+      <td> <br>
+      </td>
+    </tr>
+    <tr>
+      <td> QLIN </td>
+      <td> Real </td>
+      <td> Linear Artificial Viscosity Coefficient </td>
+      <td> 0 or higher </td>
+      <td> <br>
+      </td>
+    </tr>
+    <tr>
+      <td> COURNO </td>
+      <td> Real </td>
+      <td> Courant Number </td>
+      <td> 0.5 recommended </td>
+      <td> <br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<hr size="5" width="100%"><a name="bndry">
+<br>
+<br>
+</a>
+<p>
+<table border="5" cellpadding="5" cellspacing="5">
+  <tbody>
+    <tr>
+      <th colspan="5" align="center">Namelist IIB</th>
+    </tr>
+    <tr>
+      <th>Parameter</th>
+      <th>Data Type</th>
+      <th> Attribute </th>
+      <th>Valid Values</th>
+      <th> Notes </th>
+    </tr>
+    <tr>
+      <td> NIIS(1) </td>
+      <td> Integer </td>
+      <td> Specifies Hydro BC at inner 1-boundary </td>
+      <td> 1, 2, 3, 4 </td>
+      <td> See comments in setup.F and bndyflgs.F </td>
+    </tr>
+    <tr>
+      <td> NIIS(2) </td>
+      <td> Integer </td>
+      <td> Specifies Radiation BC at inner 1-boundary </td>
+      <td> 1, 2, 3, 4 </td>
+      <td> See comments in setup.F </td>
+    </tr>
+    <tr>
+      <td> NIIS(3) </td>
+      <td> Integer </td>
+      <td> Specifies Gravity BC at inner 1-boundary </td>
+      <td> 1, 2, 3, 4 </td>
+      <td> See comments in setup.F </td>
+    </tr>
+    <tr>
+      <td> FIIS(1) </td>
+      <td> Real </td>
+      <td> Imposed inner boundary density when NIIS(1) = 3 </td>
+      <td> Problem-specific </td>
+      <td> See comments in setup.F </td>
+    </tr>
+    <tr>
+      <td> FIIS(2) </td>
+      <td> Real </td>
+      <td> Imposed inner boundary gas energy when NIIS(1) = 3 </td>
+      <td> Problem-specific </td>
+      <td> See comments in setup.F </td>
+    </tr>
+    <tr>
+      <td> FIIS(3) </td>
+      <td> Real </td>
+      <td> Imposed inner boundary value for V1 when NIIS(1) = 3 </td>
+      <td> Problem-specific </td>
+      <td> See comments in setup.F </td>
+    </tr>
+    <tr>
+      <td> FIIS(4) </td>
+      <td> Real </td>
+      <td> Imposed inner boundary value for V2 when NIIS(1) = 3 </td>
+      <td> Problem-specific </td>
+      <td> See comments in setup.F </td>
+    </tr>
+    <tr>
+      <td> FIIS(5) </td>
+      <td> Real </td>
+      <td> Imposed inner boundary value for V3 when NIIS(1) = 3 </td>
+      <td> Problem-specific </td>
+      <td> See comments in setup.F </td>
+    </tr>
+    <tr>
+      <td> FIIS(6,7,8) </td>
+      <td> Real </td>
+      <td> Imposed inner boundary values for B(1,2,3) when NIIS(1) = 3 </td>
+      <td> Problem-specific </td>
+      <td> See comments in setup.F, bndyflgs.F </td>
+    </tr>
+    <tr>
+      <td> FIIS(9,10,11) </td>
+      <td> Real </td>
+      <td> Imposed inner boundary values for EMF(1,2,3) when NIIS(1) =
+3 </td>
+      <td> Problem-specific </td>
+      <td> See comments in setup.F, bndyflgs.F </td>
+    </tr>
+    <tr>
+      <td> FIIS(12) </td>
+      <td> Real </td>
+      <td> Imposed inner boundary value for ER when NIIS(2) = 3 </td>
+      <td> Problem-specific </td>
+      <td> See comments in setup.F </td>
+    </tr>
+    <tr>
+      <td> FIIS(13) </td>
+      <td> Real </td>
+      <td> Imposed inner boundary value for GP when NIIS(3) = 3 </td>
+      <td> Problem-specific </td>
+      <td> See comments in setup.F </td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p>
+<table border="5" cellpadding="5">
+  <tbody>
+    <tr>
+      <th align="center">Namelists OIB, IJB, OJB, IKB, OKB</th>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p><a name="bndry">The remaining boundary value namelists are defined
+analogously to the values in IIB.
+Read the comments in setup.F and bndyflgs.F for further details.
+<br>
+<br>
+</a></p>
+<hr size="5" width="100%"><a name="ggen">
+</a>
+<p>
+<table border="5" cellpadding="5" cellspacing="5">
+  <tbody>
+    <tr>
+      <th colspan="5" align="center">Namelists GGEN1, GGEN2, GGEN3</th>
+    </tr>
+    <tr>
+      <th>Parameter</th>
+      <th>Data Type</th>
+      <th> Attribute </th>
+      <th>Valid Values</th>
+      <th> Notes </th>
+    </tr>
+    <tr>
+      <td> NBL </td>
+      <td> Integer </td>
+      <td> Total number of physical zones along axis </td>
+      <td> &gt;= per-processor minimum </td>
+      <td> See GGEN_Remarks </td>
+    </tr>
+    <tr>
+      <td> X(1,2,3)MIN </td>
+      <td> Real </td>
+      <td> Location of inner boundary face (cm)</td>
+      <td> User's choice </td>
+      <td> See GGEN_Remarks </td>
+    </tr>
+    <tr>
+      <td> X(1,2,3)MAX </td>
+      <td> Real </td>
+      <td> Location of outer boundary face (cm)</td>
+      <td> User's choice </td>
+      <td> See GGEN_Remarks </td>
+    </tr>
+    <tr>
+      <td> IGRID </td>
+      <td> Integer </td>
+      <td> Zoning Parameter </td>
+      <td> -1, 1, 0, -2, 2 </td>
+      <td> See comments in GGEN.F </td>
+    </tr>
+    <tr>
+      <td> X(1,2,3)RAT </td>
+      <td> Real </td>
+      <td> Zoning Parameter </td>
+      <td> &gt; 0.0 </td>
+      <td> See comments in GGEN.F </td>
+    </tr>
+    <tr>
+      <td> DX(1,2,3)MIN </td>
+      <td> Real </td>
+      <td> Zoning Parameter </td>
+      <td> &gt; 0.0 </td>
+      <td> See comments in GGEN.F </td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<h4><a name="ggen">GGEN_Remarks:</a></h4>
+<a name="ggen">In the simplest case, the number designated by "NBL" in
+each GGEN namelist is simply
+the total number of zones in the global problem domain along the
+appropriate
+coordinate axis. In a parallel calculation, the following equalities
+would apply:
+</a>
+<ol>
+  <a name="ggen"> <li> NBL(GGEN1) = NTILES(1) x I_ZONES </li>
+  <li> NBL(GGEN2) = NTILES(2) x J_ZONES </li>
+  <li> NBL(GGEN3) = NTILES(3) x K_ZONES </li>
+  </a>
+</ol>
+<p>
+<a name="ggen">ZEUS-MP has the ability to adopt ratioed zoning
+according to parameters such as
+IGRID, X(1,2,3)RAT, and DX(1,2,3)MIN. A given zoning prescription
+(including
+uniforming zoning) can be applied to a sub-portion of the global axis,
+in which
+case NBL becomes the number of zones over which a given zoning
+prescription is
+employed. For example, if we wished to use uniform zoning along the
+inner
+half of the 1-axis and ratioed zoning along the outer half, our copy of
+ZMP_INP
+would contain two consecutive entries for GGEN1, in which the grid
+parameters
+for each block are chosen appropriately. Click </a><a
+ href="./zmp_inp.ratzone_ex">
+here</a> for an example ZMP_INP file which accomplishes this. Notice
+that in
+the first instance of GGEN1, the parameter LGRID is set to .FALSE.,
+whereas
+in the second instance it is .TRUE. The value of .TRUE. tells ZEUS-MP
+that no
+further blocks of zones are to be read for this coordinate axis.
+<br>
+<br>
+</p>
+<hr size="5" width="100%"><a name="grvcon">
+</a>
+<p>
+<table border="5" cellpadding="5" cellspacing="5">
+  <tbody>
+    <tr>
+      <th colspan="5" align="center">Namelist GRVCON</th>
+    </tr>
+    <tr>
+      <th>Parameter</th>
+      <th>Data Type</th>
+      <th> Attribute </th>
+      <th>Valid Values</th>
+      <th> Notes </th>
+    </tr>
+    <tr>
+      <td>guniv </td>
+      <td> Real </td>
+      <td>Gravitional Constant </td>
+      <td> 6.67e-8 (cgs) </td>
+      <td> See GRVCON_Remarks(1) </td>
+    </tr>
+    <tr>
+      <td>tgrav </td>
+      <td> Real </td>
+      <td>Time at which to enable gravity </td>
+      <td> User's Choice (sec) </td>
+      <td> See GRVCON_Remarks(2) </td>
+    </tr>
+    <tr>
+      <td>ptmass </td>
+      <td> Real </td>
+      <td>Mass of imposed point mass</td>
+      <td> User's Choice (gm) </td>
+      <td> See GRVCON_Remarks(3) </td>
+    </tr>
+    <tr>
+      <td>x1ptm </td>
+      <td> Real </td>
+      <td>1-coordinate of point mass</td>
+      <td> User's Choice (cm) </td>
+      <td> <br>
+      </td>
+    </tr>
+    <tr>
+      <td>x2ptm </td>
+      <td> Real </td>
+      <td>2-coordinate of point mass</td>
+      <td> User's Choice (cm) </td>
+      <td> <br>
+      </td>
+    </tr>
+    <tr>
+      <td>x3ptm </td>
+      <td> Real </td>
+      <td>3-coordinate of point mass</td>
+      <td> User's Choice (cm) </td>
+      <td> <br>
+      </td>
+    </tr>
+    <tr>
+      <td>XWEDGE</td>
+      <td> Logical </td>
+      <td>Compute M(r) assuming a 45 degree wedge </td>
+      <td> .TRUE. or .FALSE. </td>
+      <td> See GRVCON_Remarks(4) </td>
+    </tr>
+    <tr>
+      <td>GSUP </td>
+      <td> Integer </td>
+      <td>Cycle number at which to compute gravity</td>
+      <td> User's Choice (cm) </td>
+      <td> Obsolete; not used. </td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<h4><a name="grvcon">GRVCON_Remarks:</a></h4>
+<ol>
+  <a name="grvcon"> <li> While ordinarily one would wish to set GUNIV
+to the usual CGS value; the pressureless-collapse test problem actually
+assumes that G = 1. GUNIV was therefore included in the input namelist
+for problem flexibility. </li>
+  <li> TGRAV allows the user to delay the calculation of gravity until
+some amount of evolution time has passed. Evidently there was some test
+or application where this was useful. Perhaps you'll find it useful. </li>
+  <li> If XPTMASS = .TRUE. in namelist PHYSCON, then PTMASS provides
+the mass in grams of the point mass to be included. X(1,2,3)PTM provide
+the coordinates of the point mass in the computational domain. </li>
+  <li> If XSPHGRV = .TRUE. in namelist PHYSCON, then set XWEDGE =
+.TRUE. if the angular grid is an equatorial wedge spanning 45 degrees.
+This enables a correct computation of interior mass vs radius. If the
+angular mesh spans a full 180 degrees, set this flag to .FALSE.
+(default). </li>
+  </a>
+</ol>
+<a name="grvcon"><br>
+<br>
+</a>
+<hr size="5" width="100%"><a name="radcon"></a>
+<p>
+<table border="5" cellpadding="5" cellspacing="5">
+  <tbody>
+    <tr>
+      <th colspan="5" align="center">Namelist RADCON</th>
+    </tr>
+    <tr>
+      <th>Parameter</th>
+      <th>Data Type</th>
+      <th> Attribute </th>
+      <th>Valid Values</th>
+      <th> Notes </th>
+    </tr>
+    <tr>
+      <td> IFLD </td>
+      <td>Integer</td>
+      <td> Flux-Limiter selector </td>
+      <td> 1 or 2</td>
+      <td> Used in DIFCO{1,2,3}.F </td>
+    </tr>
+    <tr>
+      <td> EPSME </td>
+      <td>Real</td>
+      <td> Newton-Raphson convergence tolerance</td>
+      <td> User's Choice</td>
+      <td> Used in GREY_FLD.F </td>
+    </tr>
+    <tr>
+      <td> CNVCRIT </td>
+      <td>Integer</td>
+      <td> N-R convergence check method</td>
+      <td> 1 or 2</td>
+      <td> Used in GREY_FLD.F </td>
+    </tr>
+    <tr>
+      <td> ERNOM </td>
+      <td>Real</td>
+      <td> Nominal radiation energy density</td>
+      <td> application-specific</td>
+      <td> Used when CNVCRIT=2 </td>
+    </tr>
+    <tr>
+      <td> ENNOM </td>
+      <td>Real</td>
+      <td> Nominal gas energy density</td>
+      <td> application-specific</td>
+      <td> Used when CNVCRIT=2 </td>
+    </tr>
+    <tr>
+      <td> DEMAX </td>
+      <td>Real</td>
+      <td> N-R correction coefficient</td>
+      <td> Default=0.2</td>
+      <td> Used in GREY_FLD.F </td>
+    </tr>
+    <tr>
+      <td> DERMAX </td>
+      <td>Real</td>
+      <td> N-R correction coefficient</td>
+      <td> Default=0.2</td>
+      <td> Used in GREY_FLD.F </td>
+    </tr>
+    <tr>
+      <td> NMEITER </td>
+      <td>Integer</td>
+      <td> Maximum allowed number of N-R iterations</td>
+      <td> 20 seems sufficient</td>
+      <td> Used in GREY_FLD.F </td>
+    </tr>
+    <tr>
+      <td> RADTH </td>
+      <td>Real</td>
+      <td> Time-centering parameter</td>
+      <td> 0.0 - 1.0 </td>
+      <td> Used in JACOB.F </td>
+    </tr>
+    <tr>
+      <td> EPSMAXD </td>
+      <td>Real</td>
+      <td> Radiation timestep limit parameter</td>
+      <td> Recommend 0.01 - 0.1 </td>
+      <td> Used in RAD_IMP_DT.F </td>
+    </tr>
+    <tr>
+      <td> CGERRCRIT </td>
+      <td>Integer</td>
+      <td> Linear solver convergence checking</td>
+      <td> 1 or 2 </td>
+      <td> Used in CGSOLVE.F </td>
+    </tr>
+    <tr>
+      <td> IPCFLAG </td>
+      <td>Integer</td>
+      <td> Linear solver preconditioning flag</td>
+      <td> 2 </td>
+      <td> Used in routines called by CGSOLVE.F </td>
+    </tr>
+    <tr>
+      <td> XNU </td>
+      <td>Real</td>
+      <td> Density exponent in opacity power-law</td>
+      <td> application specific </td>
+      <td> Used in OPACITY.F, MATPROP.F </td>
+    </tr>
+    <tr>
+      <td> POWR </td>
+      <td>Real</td>
+      <td> Temperature exponent in opacity power-law</td>
+      <td> application specific </td>
+      <td> Used in OPACITY.F, MATPROP.F </td>
+    </tr>
+    <tr>
+      <td> rho0 </td>
+      <td>Real</td>
+      <td> Density normalization in opacity power-law</td>
+      <td> application specific </td>
+      <td> Used in OPACITY.F, MATPROP.F </td>
+    </tr>
+    <tr>
+      <td> T_0 </td>
+      <td>Real</td>
+      <td> Temperature normalization in opacity power-law</td>
+      <td> application specific </td>
+      <td> Used in OPACITY.F, MATPROP.F </td>
+    </tr>
+    <tr>
+      <td> RMFP0 </td>
+      <td>Real</td>
+      <td> Coefficient in Rosseland mean-free path power-law</td>
+      <td> application specific </td>
+      <td> Used in OPACITY.F, MATPROP.F </td>
+    </tr>
+  </tbody>
+</table>
+<a name="radcon"><br>
+<br>
+</a></p>
+<hr size="5" width="100%"><a name="eqos">
+</a>
+<p>
+<table border="5" cellpadding="5" cellspacing="5">
+  <tbody>
+    <tr>
+      <th colspan="5" align="center">Namelist EQOS</th>
+    </tr>
+    <tr>
+      <th>Parameter</th>
+      <th>Data Type</th>
+      <th> Attribute </th>
+      <th>Valid Values</th>
+      <th> Notes </th>
+    </tr>
+    <tr>
+      <td> GAMMA </td>
+      <td> Real </td>
+      <td> Adiabatic exponent </td>
+      <td> &gt;1 </td>
+      <td> For isothermal EOS, set XISO=.TRUE. in PHYSCON </td>
+    </tr>
+    <tr>
+      <td> MMW </td>
+      <td> Real </td>
+      <td> Mean molecular weight </td>
+      <td> &gt;0 (duh!) </td>
+      <td><br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<a name="eqos"><br>
+<br>
+</a></p>
+<hr size="5" width="100%"><a name="pgen">
+</a>
+<p>
+<table border="5" cellpadding="5" cellspacing="5">
+  <tbody>
+    <tr>
+      <th align="center">Namelist PGEN</th>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p><a name="pgen">The contents of PGEN are entirely
+application-specific and defined according
+to the needs of the User. PGEN ("problem generation") is read by the
+problem-generating subroutine (or problem-restarting subroutine, as the
+case may be) written by the User. BLAST.F and RSHOCK.F are fine
+examples
+of problem-generating subroutines.
+<br>
+<br>
+</a></p>
+<hr size="5" width="100%"><a name="gcon">
+</a>
+<p>
+<table border="5" cellpadding="5" cellspacing="5">
+  <tbody>
+    <tr>
+      <th align="center">Namelist GCON</th>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p><a name="gcon">GCON contains parameters used to control grid motion.
+Grid motion
+is activated by setting XVGRID = .TRUE. in namelist PHYSCON.
+See the subroutines
+NEWGRID.F, NEWVG.F, NEWX1.F, NEWX2.F, and NEWX3.F to acquaint yourself
+with how grid motion is computed. The GCON namelist, containing
+all relevant parameters, is defined in SETUP.F.
+<br>
+<br>
+</a></p>
+<hr size="5" width="100%"><a name="iocon">
+</a>
+<p>
+<table border="5" cellpadding="5" cellspacing="5">
+  <tbody>
+    <tr>
+      <th colspan="5" align="center">Namelist IOCON (no, this isn't a
+repeat or a typo)</th>
+    </tr>
+    <tr>
+      <th>Parameter</th>
+      <th>Data Type</th>
+      <th> Attribute </th>
+      <th>Valid Values</th>
+      <th> Notes </th>
+    </tr>
+    <tr>
+      <td> tusr </td>
+      <td> Integer </td>
+      <td> Evolution time for 1st ASCII dump </td>
+      <td> greater than time of previous dump, if restarting </td>
+      <td> See remarks </td>
+    </tr>
+    <tr>
+      <td> dtusr </td>
+      <td> Integer </td>
+      <td> Time increment for next ASCII dump </td>
+      <td> greater than zero </td>
+      <td> See remarks </td>
+    </tr>
+    <tr>
+      <td> thdf </td>
+      <td> Integer </td>
+      <td> Evolution time for 1st HDF4 dump </td>
+      <td> greater than time of previous dump, if restarting </td>
+      <td> See remarks </td>
+    </tr>
+    <tr>
+      <td> dthdf </td>
+      <td> Integer </td>
+      <td> Time increment for next HDF4 dump </td>
+      <td> greater than zero </td>
+      <td> See remarks </td>
+    </tr>
+    <tr>
+      <td> tdump </td>
+      <td> Integer </td>
+      <td> Evolution time for 1st restart dump </td>
+      <td> greater than time of previous dump, if restarting </td>
+      <td> See remarks </td>
+    </tr>
+    <tr>
+      <td> dtdump </td>
+      <td> Integer </td>
+      <td> Time increment for next restart dump </td>
+      <td> greater than zero </td>
+      <td> See remarks </td>
+    </tr>
+    <tr>
+      <td> t_out </td>
+      <td> Integer array</td>
+      <td> Preset times at which to dump data </td>
+      <td> greater than zero </td>
+      <td> Overrides dtusr and dthdf; see remarks </td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<h4><a name="iocon"> IOCON Remarks </a></h4>
+<a name="iocon">The t*** and corresponding dt*** parameters specify the
+frequency with
+which each type of output file is written <b> provided that</b> the
+appropriate LOGICAL switch (XASCII, XHDF4, XRESTART) in namelist IOCONF
+has been set to ".TRUE.". For example, if XASCII is set to .TRUE., then
+an ASCII output file will be written once the evolution time (the <b>time</b>
+variable in ZEUS-MP) equals or exceeds the value of <b>tusr</b>
+specified
+in IOCON. Additional files will be written every <b>dtusr</b> seconds
+of
+<b>time</b> thereafter.
+<p>dthdf and dtusr may be overridden by specifying set times at which
+HDF
+and ASCI files are to be written. This is done by setting values of the
+array t_out(i), which can hold up to 32 entries (this is controlled by
+the
+value of the dimension parameter "nbuff". If entries for t_out(1),
+t_out(2),
+etc. are included in namelist IOCON, then the values of dtusr and dthdf
+will
+be ignored, <b>except</b> that dtusr and dthdf must be non-zero for
+files
+to be written at intermediate times! <b>Additional Note:</b> t_out
+does not
+overwrite the frequency, dtdump, at which restart files are written.</p>
+</a>
+<p><a name="iocon">NOTE: Setting dtusr (for example) to zero will cause
+an ASCII file to
+be written only at the beginning and end of program execution.
+</a></p>
+<p><a name="iocon"><b><font color="#ff0000">WARNING FOR RESTARTING: </font>
+If ZEUS-MP
+is initiated from a restart file, the values of tusr, thdf, and tdump
+<b> MUST BE UPDATED </b> to be greater than or equal to the time of
+the previous dump!! <b>Failure</b> to update the time counter may <b>
+result in output files written at every timestep.</b> Trust me; you
+don't want this.
+</b></a></p>
+</body>
+</html>

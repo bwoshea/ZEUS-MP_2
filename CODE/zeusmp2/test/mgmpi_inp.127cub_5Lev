@@ -1,0 +1,151 @@
+//====================================================
+// Global parameters
+//====================================================
+
+   UseFortran        true
+   Test:Alias        true
+
+//====================================================
+// Input for fMain.src Poisson test problem 
+//====================================================
+
+BEGIN Test
+
+   SizeIsLocal       true
+   ForceOddAxes      false
+
+// Boundary conditions
+
+   BcXM Dirichlet
+   BcXP Dirichlet
+   BcYM Dirichlet
+   BcYP Dirichlet
+   BcZM Dirichlet
+   BcZP Dirichlet
+
+   BcValue 0e11
+   BcUseArrays          true
+
+// Grid extents (not needed in ftest/ctest since Pde/Discretize not used)
+
+   GridXM -1.2e0
+   GridXP  1.2e0
+   GridYM -1.2e0
+   GridYP  1.2e0
+   GridZM -1.2e0
+   GridZP  1.2e0
+
+// Output
+
+   DumpRightHandSide  false
+   DumpSolution       false
+   DumpExactSolution  false
+   DumpError          false
+
+END Test
+
+//----------------------------------------------------
+// Pde (NOT CURRENTLY USED IN ctest.C / ftest.F)
+//----------------------------------------------------
+// Pde                DisconExample
+//   Pde                GravityExample
+//   Pde:Cx      0.0
+//   Pde:Cy      0.0
+//   Pde:Cz      0.0
+
+//   Pde                AnisotropicExample
+//   Pde:Ax      1.0
+//   Pde:Ay      1.0
+//   Pde:Az      1.0
+
+// Discontinuity      1.0e0        // used for Discontinuous only
+// Anisotropy         0.25e0        // used for Anisotropic only
+
+//----------------------------------------------------
+// Linear system properties
+//----------------------------------------------------
+
+   Matrix             7pt
+
+//----------------------------------------------------
+// Solver parameters
+//----------------------------------------------------
+
+   Solver MG
+
+   Solver:OutputLevel      0
+
+//----------------------------------------------------
+// Stopping criteria
+//----------------------------------------------------
+
+   Stopping                RLTB
+   BEGIN Stopping
+      Tolerance            1e-6
+      IterationLimit       500
+      TimeLimit            3600
+      CheckForDiverge      true
+      CheckForStall        true
+   END Stopping
+
+//----------------------------------------------------
+// Multigrid parameters
+//----------------------------------------------------
+
+   BEGIN Multigrid
+
+      Cycle           V-cycle
+
+      Levels          5
+
+      Prolong         Linear
+
+      Restrict        27pt
+
+      Coarse:Matrix   7pt
+      Coarsening      Harmonic
+      CoarsenAxisX    true
+      CoarsenAxisY    true
+      CoarsenAxisZ    true
+
+      BEGIN PreSmoother
+         Solver:OutputLevel        0
+         Solver                    RBGS
+         SmootherWeight            1.15
+//         Solver                    Jacobi
+//         SmootherWeight            0.857143
+         Stopping                  RLTB
+         Stopping:IterationLimit   2
+         Stopping:Tolerance        0.0
+         Stopping:TimeLimit        6000
+         Stopping:CheckForDiverge  false
+         Stopping:CheckForStall    false
+      END PreSmoother
+
+      BEGIN PostSmoother
+         Solver:OutputLevel        0
+         Solver                    RBGS
+         SmootherWeight            1.15
+//         Solver                    Jacobi
+//         SmootherWeight            0.857143
+         Stopping                  RLTB
+         Stopping:IterationLimit   2
+         Stopping:Tolerance        0.0
+         Stopping:TimeLimit        6000
+         Stopping:CheckForDiverge  false
+         Stopping:CheckForStall    false
+      END PostSmoother
+
+      BEGIN CoarseSolver
+         Solver                    CG
+         Solver:OutputLevel        0
+         Stopping                  RLTB
+         Stopping:IterationLimit   500
+         Stopping:Tolerance        1.0e-3
+         Stopping:TimeLimit        6000
+         Stopping:CheckForDiverge  false
+         Stopping:CheckForStall    false
+      END CoarseSolver
+
+   END Multigrid
+

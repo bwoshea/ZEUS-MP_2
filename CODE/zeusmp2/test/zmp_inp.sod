@@ -1,0 +1,43 @@
+ &GEOMCONF  LGEOM   =1, 
+            LDIMEN  =1 /
+ &PHYSCONF  LRAD    =0, 
+            XHYDRO  =.TRUE., 
+            XFORCE  =.TRUE., 
+            XMHD    =.false.,
+            XTOTNRG =.TRUE.,
+            XGRAV   =.false., 
+            XGRVFFT =.false., 
+            XPTMASS =.false., 
+            XISO    =.false., 
+            XSUBAV  =.false., 
+            XVGRID  =.false. /
+ &IOCONF    XASCII  =.TRUE., 
+            XHDF    =.false., 
+            XRESTART=.false./
+ &PRECONF   SMALL_NO=1.0D-99, 
+            LARGE_NO=1.0D+99 /
+ &ARRAYCONF IZONES  =128, 
+            JZONES  =1,
+            KZONES  =1, 
+            MAXIJK  =128 /
+ &mpitop ntiles(1)=1,ntiles(2)=1,ntiles(3)=1,periodic=3*.false. /
+ &rescon irestart=0, tdump=1.0, dtdump=1.0 resfile='resaa000000.001'/
+ &pcon nlim=100000, tlim=0.245e0, cpulim=36000.0, mbatch=1 /
+ &hycon qcon=2.0,courno=0.5,dtrat=1.0e-3 /
+ &iib niis(1)=2 /
+ &oib nois(1)=2 /
+ &ijb nijs(1)=2 /
+ &ojb nojs(1)=2 /
+ &ikb niks(1)=2 /
+ &okb noks(1)=2 /
+ &ggen1 nbl=128,x1min=0.0,x1max=1.0,igrid=1,x1rat=1.,lgrid=.true.  /
+ &ggen2 nbl=  1,x2min=0.0,x2max=0.4,igrid=1,x2rat=1.,lgrid=.true.  /
+ &ggen3 nbl=  1,x3min=0.0,x3max=0.2,igrid=1,x3rat=1.,lgrid=.true.  /
+ &grvcon /
+ &radcon /
+ &eqos gamma=1.4,mmw=1.0D0 /
+ &pgen x10=0.5, x20=0.5, d0=1.0, d1=0.125,
+       p0=1.0, p1=0.1, idirect=1, x30=0.5 /
+ &gcon /
+ &iocon dtusr=1.0,
+  t_out(1)=0.1, t_out(2)=0.15, t_out(3)=0.2 /

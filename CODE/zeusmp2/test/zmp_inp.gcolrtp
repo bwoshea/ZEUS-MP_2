@@ -1,0 +1,42 @@
+ &GEOMCONF  LGEOM    = 3, 
+            LDIMEN   = 2 /
+ &PHYSCONF  LRAD     = 0, 
+            XHYDRO   = .TRUE., 
+            XFORCE   = .TRUE., 
+            XMHD     = .false.,
+            XTOTNRG  = .false.,
+            XGRAV    = .TRUE., 
+            XGRVFFT  = .false., 
+            XSPHGRV  = .false., 
+            XPTMASS  = .false., 
+            XISO     = .false., 
+            XSUBAV   = .false., 
+            XVGRID   = .false. /
+ &IOCONF    XASCII   = .TRUE., 
+            XHDF     = .false., 
+            XRESTART = .false./
+ &PRECONF   SMALL_NO = 1.0D-99, 
+            LARGE_NO = 1.0D+99 /
+ &ARRAYCONF IZONES   = 256, 
+            JZONES   = 16, 
+            KZONES   = 1, 
+            MAXIJK   = 256 /
+ &MPITOP ntiles(1)=1,ntiles(2)=1,ntiles(3)=1,periodic=2*.false.,.true./
+ &RESCON irestart=0, tdump=0.0, dtdump=20.0 /
+ &PCON   nlim=100000, tlim=0.535, cpulim= 20000.0, mbatch=1 /
+ &HYCON  qcon=0.0, qlin=0.0, courno=0.5, iord=2, istp=0,dtrat=1.0d-4 /
+ &IIB    niis(1)=1, niis(2)=1, niis(3)=1 /
+ &OIB    nois(1)=2, nois(2)=2, nois(3)=3,fois(13)=3.21109579d0 /
+ &IJB    nijs(1)=1, nijs(2)=1, nijs(3)=1 /
+ &OJB    nojs(1)=1, nojs(2)=1, nojs(3)=1 /
+ &IKB    niks(1)=4, niks(2)=4, niks(3)=4 /
+ &OKB    noks(1)=4, noks(2)=4, noks(3)=4 /
+ &GGEN1  nbl=256,x1min=0.001e0,x1max=1.285e0,igrid=1,x1rat=1.,lgrid=.true. /
+ &GGEN2  nbl= 16,x2min=0.0e0,x2max=3.1415926535897932d0,igrid=1,x2rat=1.,lgrid=.true. /
+ &GGEN3  nbl=  1,x3min=0.0e0,x3max=6.2831853071795862D0,igrid=1,x3rat=1.,lgrid=.true. /
+ &GRVCON guniv=1.0,tgrav=-1.0 /
+ &RADCON ipcflag=2,cgerrcrit=1/
+ &EQOS   gamma=1.6666667,mmw=1.0D0 /
+ &PGEN   d0=1.0e-4,drat=1.0e4,p0=1.0e-9,p1=1.0e-9,r=1.0d0 /
+ &GCON   igcon=1,x1fac=-1.0,x2fac=0.0,x3fac=0.0 /
+ &IOCON  tusr=0.0, dtusr=0.6 /

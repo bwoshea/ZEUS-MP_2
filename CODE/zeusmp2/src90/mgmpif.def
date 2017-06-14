@@ -1,0 +1,26 @@
+/***********************************************************************/
+/*                                                                     */
+/* File:        mgmpif.def                                             */
+/*                                                                     */
+/* Description: #defines for Fortran kernels                           */
+/*                                                                     */
+/*---------------------------------------------------------------------*/
+/*                                                                     */
+/* Author:      James Bordner                                          */
+/*                                                                     */
+/* © 2000-2003 Regents of the University of California.   */
+/*                                                                     */
+/***********************************************************************/
+
+#ifdef SCALAR_DOUBLE
+#  define _SCALAR DOUBLE PRECISION
+#  define _PRECISION
+#  define _E D
+#endif
+
+#ifdef SCALAR_SINGLE
+#  define _SCALAR REAL
+#  define _PRECISION
+#  define _E E
+#endif
+

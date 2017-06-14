@@ -1,0 +1,75 @@
+<HTML>
+<HEAD>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFF70" LINK="#0000FF" VLINK="#000088" ALINK="#CCCCFF">
+
+<A NAME="top">
+<CENTER>
+<TABLE border=5 bgcolor="#000000">
+<TR><TH align=center><FONT color="#00FF00">
+<h2>Super-Critical Radiating Shock Wave</h2>
+</FONT>
+<BR><FONT color=#FF0000>Author: John Hayes</FONT>
+</TH></TR>
+</TABLE>
+</CENTER>
+
+<br>
+<br>
+<h4>Description</h4>
+
+<P>
+A shock wave is generated in 1D cartesian geometry via a piston moving
+supersonically through the medium.  The figure below shows plots of
+the gas and radiation temperatures as functions of a coordinate system
+moving at the speed of the piston.  Plots are presented at four different
+evolution times.
+
+<br>
+<br>
+<center>
+<img src="./RSHOCK.png">
+</center>
+
+<br>
+<br>
+The subroutine which initializes this problem is available <a href="./rshock.F">here.</a>
+
+<br>
+<br>
+The zmp_inp file used to configure the code is available <a href="./zmp_inp">here.</a>
+
+<br>
+<br>
+The ASCII data files from which the figure was generated are available 
+in the table below:
+<br>
+<br>
+<center>
+<TABLE border=1 cellpadding=5 cellspacing=5>
+<TR>
+<TH align=center colspan=2>ASCII Data Dumps</TH>
+</TR>
+<TR>
+<td> Time 1</td> <td><a href="./usraa000000.001">usraa000000.001</a></td>
+</TR>
+<TR>
+<td> Time 2</td> <td><a href="./usraa000000.002">usraa000000.002</a></td>
+</TR>
+<TR>
+<td> Time 3</td> <td><a href="./usraa000000.003">usraa000000.003</a></td>
+</TR>
+<TR>
+<td> Time 4</td> <td><a href="./usraa000000.004">usraa000000.004</a></td>
+</TR>
+</TABLE>
+</center>
+
+<br>
+<br>
+The IDL program used to create the image is available <a href="./rshock.pro">here.</a>
+It calls a subprogram available <a href="./fsc_color.pro">here.</a>
+
+</BODY>
+</HTML>

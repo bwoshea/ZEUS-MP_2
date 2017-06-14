@@ -1,0 +1,280 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+</head>
+<body style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 112);"
+ alink="#ccccff" link="#0000ff" vlink="#000088">
+<table bgcolor="#000000" border="2" width="100%">
+  <tbody>
+    <tr>
+      <th align="center"><font color="#00f000">
+      <h2>User Guide Part 1: Introduction </h2>
+      <br>
+      </font> <br>
+      <font color="#ff0000">Author: John Hayes</font> </th>
+    </tr>
+  </tbody>
+</table>
+<h3><a name="summary"> The Short Story</a></h3>
+<a name="summary">ZEUS-MP is the latest addition to the ZEUS line of
+community application
+codes developed by the </a><a href="http://cosmos.ucsd.edu/" target="cosmos">Laboratory
+for
+Computational Astrophysics</a>. The "MP" suffix denotes the
+"multi-physics,"
+"massively parallel," and "message passing" aspects of the code. The
+physics
+suite in this release of ZEUS-MP includes gas hydrodynamics, ideal MHD,
+implicit flux-limited radiation diffusion (FLD), self gravity, and
+multispecies
+advection. The HD, MHD, and FLD modules can be used
+on 1, 2, or 3-dimensional grids, in Cartesian, cylindrical, or
+spherical
+coordinate geometries.
+Likewise, self-gravity is supported in all dimensions and can be
+calculated with a variety of methods, depending on geometry,
+dimensionality,
+and boundary conditions. Methods include: (1) GM/r on 1D or 2D
+spherical
+grids; (2) a conjugate-gradient Poisson solver on 2D or 3D spherical
+and
+cylindrical grids; (3) a multigrid-based Poisson solver on 3D cartesian
+grids with non-periodic boundary conditions, and (4) a Fast Fourier
+Transform
+solver for 3D cartesian grids with triply-periodic boundaries. External
+point-mass potentials are also supported.<br>
+<br>
+<b><font size="4"><a name="versions">Multiple Versions of ZEUS-MP</a></font></b><br>
+<p>
+There now exist at least 3 different versions of ZEUS-MP which have
+been made publicly available. The first of these was released directly
+by the <a href="http://cosmos.ucsd.edu/" target="ucsd">Laboratory for
+Computational
+Astrophysics</a> in 1999 when the LCA was part of the
+<a href="http://www.ncsa.uiuc.edu" target="uiuc">National Center for
+Supercomputing
+Applications</a>. </p>
+<p>
+A modified version of the original 1.0b code, currently (12/01/05)
+dubbed version 1.5.8a,
+has been distributed by John Vernaleo and Chris Reynolds on their
+<a href="http://www.astro.umd.edu/%7Evernaleo/zeusmp.html" target="umd">web
+site</a>.
+Additional information about the code and a paper recently posted
+to Astro-ph (Vernaleo and Reynolds 2005; astro-ph/0511501) is available
+there.
+</p>
+<p>
+The version of ZEUS-MP distributed on this page, which I am currently
+calling version 2.0, shares a common ancestor (v1.0b) with Vernaleo's
+ZEUS-MP v1.5.8a, but similarities end there. In what follows,
+<b>NO COMMENTS MADE ABOUT V1.0B OR VERSION 2 SHOULD BE ASSUMED TO
+APPLY TO V1.5.8A</b>.</p>
+<p> The following discussion compares ZEUS-MP v2.0, distributed on this
+web site, to ZEUS-MP v1.0b, the first public release of ZEUS-MP.
+Differences between the two fall
+into
+three categories:
+</p>
+<ol>
+  <li> <b>Available Physics:</b>
+Flux-limited radiation diffusion (FLD) and multispecies fluid advection
+are new additions to the ZEUS-MP physics set. </li>
+  <li> <b>Application Flexibility:</b> Both the
+HD and MHD modules in v1.0b were hard-wired for 3-D execution. In
+version 2, HD, MHD, and RHD are possible in all dimensions on cartesian
+(X-Y-Z), cylindrical (Z-R-Phi), and spherical (R-Theta-Phi) grids.
+In addition, non-ideal equations of state are now supported, though
+none are
+included in this release. </li>
+  <li> <b>Software Engineering:</b> In the
+version 1.0b release, extensive use was made of the C preprocessor
+(CPP)
+to select included physics, geometry, problem size, dimensionality, and
+parallel execution at compilation time. In version 2, the only CPP
+macros which remain are those which expose MPI and MGMPI functions to
+the compiler and a macro ("PROBLEM") identifying the name of the
+problem-generator subroutine. Physics, geometry, and dimension
+attributes are now set by integer and logical control parameters;
+Fortran 90 ALLOCATE statements are used to allocate field arrays at
+execution. As a result, <b>ZEUS-MP can now be
+reconfigured for problem size, dimensionality, included physics, and
+parallel topology at run time without recompilation.</b> </li>
+</ol>
+<font size="4"><b>BUGS in Version 1.0b!!</b></font><br>
+<br>
+ZEUS-MP v1.0b contains (at least) two undocumented and potentially
+severe
+bugs in the source code: <br>
+<br>
+<b>1.</b> <b>Subroutine tranx2.F: </b>values of
+the cpp macro UNROLL_J other than 4 will produce incorrect source code.
+<br>
+<br>
+<b>2.</b> <b>Subroutines tranx2.F and tranx3.F: </b>the
+"xi" expressions are incorrect for curvilinear coordinates. Correct
+expressions can be found in corresponding subroutines in Version 2.<br>
+<br>
+<a name="numerics">
+</a>
+<h3>Numerical Overview</h3>
+<a name="numerics">The overall numerical scheme adopted by ZEUS-MP is
+the same as that employed
+by earlier ZEUS codes. An operator-split scheme is adopted whereby in
+the "source step", fluid
+velocities and internal energies are updated due to the effects of body
+forces, artificial viscosity, local heating/cooling/transport due
+to radiation diffusion (if applicable), and PdV work. In the subsequent
+"transport step," these fluid
+velocities are used to advect the field variables (density, internal
+energies, composition) through the computational mesh. A three-level
+listing of the subroutine calls made during a hydro cycle is as
+follows:
+</a>
+<ul>
+  <a name="numerics"> <li> call GRAVITY (evaluate gravitational
+potential)<br>
+    <br>
+If 1D --&gt; use GM/r <br>
+If 2D --&gt; use GM/r OR call GRAV2D_CG (conjugate gradient Poisson
+Solver)<br>
+If 3D --&gt; call GRAV3D_CG OR call MGMPI (conjugate gradient or
+Multigrid solvers) <br>
+    <br>
+  </li>
+  <li> call SRCSTEP (execute "source" step)<br>
+    <br>
+    <ul>
+      <li> call EOS_D (compute pressure) </li>
+      <li> call FORCES_D (update velocities due to body forces) </li>
+      <li> call AVISC_D (update velocities and gas energy due to
+artificial viscosity) </li>
+      <li> call RADUPDT (perform radiation diffusion, if desired) </li>
+      <li> call PDV_D (add PdV work term to internal energy) </li>
+    </ul>
+    <br>
+  </li>
+  <li> call TRANSPRT (execute "transport" -- by which we really mean
+"advection" -- step)<br>
+    <br>
+    <ul>
+      <li> call HSMOC (update magnetic fields via the Hawley-Stone
+Method of Characteristics) <br>
+        <br>
+      </li>
+      <li> call ADVX1 (advect along "x1" axis) <br>
+        <br>
+        <ul>
+          <li> call TRANX1 (advect density, gas/radiation energies,
+abundances) </li>
+          <li> call MOMX1 (advect momentum densities) </li>
+        </ul>
+        <br>
+        <br>
+      </li>
+      <li> call ADVX2 (advect along "x2" axis) <br>
+        <br>
+        <ul>
+          <li> call TRANX2 (advect density, gas/radiation energies,
+abundances) </li>
+          <li> call MOMX2 (advect momentum densities) </li>
+        </ul>
+        <br>
+        <br>
+      </li>
+      <li> call ADVX3 (advect along "x3" axis) <br>
+        <br>
+        <ul>
+          <li> call TRANX3 (advect density, gas/radiation energies,
+abundances) </li>
+          <li> call MOMX3 (advect momentum densities) </li>
+        </ul>
+      </li>
+    </ul>
+    <br>
+  </li>
+  <li> call NUDT (compute timestep for next hydro cycle) </li>
+  </a>
+</ul>
+<p>
+<a name="numerics"><b>NOTE:</b> The order in which the ADVX*
+subroutines are called is cyclically permuted from one timestep to the
+next for numerical stability.
+</a><a name="parallelism"></a></p>
+<h3><a name="parallelism">Implementing Parallelism</a></h3>
+<a name="parallelism">ZEUS-MP uses the <i>Message-Passing Interface</i>
+(MPI) to achieve parallelism
+in a distributed-memory model. ZEUS-MP uses spatial <i>domain
+decomposition</i>
+to subdivide and distribute the computational domain across the
+processors
+in a multi-process calculation. The domain can be subdivided along any
+or all
+of the computational axes which are "active" (i.e. have more than one
+physical
+zone) in a calculation.
+</a>
+<p><a name="parallelism">Because ZEUS-MP adopts a distributed-memory
+approach, message-passing via MPI
+must be used to update the information in the "ghost zones" bounding a
+processor's
+share of physical zones. In order to facilitate the overlap of
+communication
+and computation, <i>asynchronous message passing</i> is employed with <b>MPI_ISEND</b>
+and <b>MPI_IRECV</b> function calls. These function calls are
+interleaved with
+Fortran DO loops which do actual computational work according to the
+following
+strategy: <br>
+<br>
+</a></p>
+<ol>
+  <a name="parallelism"> <li> Initiate send/receive requests for
+boundary data to/from neighboring processors. </li>
+  <li> Execute work on "interior" zones in local domain. </li>
+  <li> Verify that MPI_ISEND/MPI_IRECV processes have finished. </li>
+  <li> Execute work on boundary zones in local domain. </li>
+  </a>
+</ol>
+<p>
+<a name="parallelism">In a 3-D calculation, ghost "faces" must be
+exchanged along 3 coordinates,
+and for corner ghost zones to be updated correctly, the updates along
+axis "n" must complete before the updates along axis "n+1" are
+initiated.
+Therefore, the strategy outlined above is applied along <i>each</i>
+active coordinate axis, which means that the "interior" domain is
+subdivided
+into several pieces so that the communication/computation overlap
+strategy
+may be used along each axis. Subroutines that employ this strategy
+include:
+</a></p>
+<ol>
+  <a name="parallelism"> <li> EOS_D </li>
+  <li> FORCES_D </li>
+  <li> AVISC_D </li>
+  <li> PDV_D </li>
+  <li> ADVX1 </li>
+  <li> ADVX2 </li>
+  <li> ADVX3 </li>
+  <li> NUDT </li>
+  </a>
+</ol>
+<p>
+<a name="parallelism">In addition to enhancing parallel efficiency,
+this "interleaving" strategy
+makes the subroutines listed above quite complicated in structure. For
+example, examination of ADVX1 (source file advx1.F) shows multiple
+occurrences
+of the TRANX1 and MOMX1 subroutine calls, each operating over a
+different
+range of zone indices, interspersed with calls to BVAL* subroutines
+which
+do the heaving lifting of MPI. On scalable hardware architectures,
+however,
+this strategy has proven quite effective at promoting parallel
+efficiency.
+</a></p>
+</body>
+</html>

@@ -1,0 +1,109 @@
+==============================================================================
+================= Version 2.1.2: Released January 25, 2007 ===================
+==============================================================================
+1) BUG FIXES
+   a) Subroutine mapout.F edited to add a statement which writes the boundary
+      value arrays nijb1 and nojb1 to the restart files.  These writes had 
+      been erroneously omitted in previous releases. (Perversely, the corres-
+      ponding READ statements in mapin.F were already present.)
+   b) Subroutine restart.F was edited so that the (unnecessary) call to NUDT
+      was commented out.  The restart files already contain the value of dt
+      that should be used at startup; this call to NUDT overwrites that value.
+
+2) NEW FEATURES:  zip, zero, nada.
+
+==============================================================================
+================= Version 2.1.1: Released December 21, 2006 ==================
+==============================================================================
+1) BUG FIXES
+
+   a) Subroutines LORENTZ_2D and LORENTZ were edited to correct a typo in a
+      metric factor used to compute accelerations for the 3-velocity.
+      ZEUS-MP 1.0b USERS NOTE: this bug was inherited from ZEUS-3D and is
+      also present in Version 1.0b!
+   b) Subroutine FORCES was edited to correct a typo in the computation of
+      corrections to the 2-velocity due to rotational pseudoforces.
+      ZEUS-MP 1.0b USERS NOTE: this bug was inherited from ZEUS-3D and is
+      also present in Version 1.0b!
+   c) Subroutines CT, CT_1D, and CT_2D were edited to extend the ranges of
+      the [i,j,k] DO loops that copy the v[1,2,3] field arrays into the local
+      u[1,2,3] scratch arrays.  This avoids passing uninitialized u[1,2,3]
+      data in the BVALV[1,2,3] subroutines.
+   d) Subroutine FORCES was edited to implement Sean Matt's
+      corrections to components of the point-mass potential in RTP geometry.
+   e) Subroutine GGEN was edited to implement Matthias Vigelius's corrections
+      to DO loops 36, 136, and 236.  The original versions resulted in an incorrect
+      assignment of ratioed grids when such grids are distributed across multiple
+      processors.
+   f) Subroutine MOMX2 was edited to "re-roll" the I-loops and to correct a
+      bug in the "sflx" formula that manifested itself on reflecting 2-boundaries
+      in spherical geometry.
+   g) Subroutine CONFIGURE was edited so that the open statement for unit 1 was
+      moved after the initialization commands for MPI, and an "if(myid_w .eq. 0)"
+      condition was prepended to the open command.
+   h) Subroutine MSTART was edited to prepend an "if(myid_w .eq. 0)" condition
+      to the CLOSE statement for unit 1 (zmp_inp).
+   i) Subroutine PDV was edited to add an "IMPLICIT NONE" statement and a
+      declaration for variable div_v
+   j) Subroutine STREAM was edited to correct an indexing error for the case
+      of idirect=3.
+   k) Subroutines ZEUSMP, INTCHK, and file MOD_FILES were tweaked for the case
+      of ARCH_CRAY defined in the Makefile.  This allows the timing routines
+      to work on a Cray XT3 (Jaguar at ORNL).
+
+2) NEW FEATURES
+
+   None. Zip. Zero. Nada.
+==============================================================================
+==================== Version 2.1.0: Released May 23, 2006 ====================
+==============================================================================
+1) BUG FIXES
+
+   a) Subroutines CT, CT_1D, CT_2D, and LORENTZ_D edited to correct a memory
+      referencing error in which two arrays were assigned the same space in
+      memory.  ZEUS-MP 1.0b USERS NOTE: this bug was inherited from Version
+      1.0b.
+   b) Subroutine FORCES edited to correct an error in the k-indexing of 
+      array "derdx3" in the evaluation of radiation forces for the 2-velocity.
+
+2) NEW FEATURES: HDF5 SUPPORT INTRODUCED.
+
+   a) The subroutine HDFALL, which writes HDF-based output files for visualization,
+      now comes in three versions (all contained within file hdfall.F), depending
+      upon the specification of an appropriate CPP macro in the ZMP_CPP line
+      of the Makefile.
+
+   b) Subroutines MSAVE and MGET (contained in file msave.F), which write
+      restart files, can now be configured to write those files in HDF5 format
+      rather than native binary if the appropriate CPP macro is defined in
+      the Makefile.
+
+   c) The logical parameters XHDF4 and XHDF5 in zmp_inp namelist IOCONF have
+      been replaced with a single switch, XHDF.  All example zmp_inp namelists
+      in directory zeusmp2/test have been modified accordingly.  The restart
+      file parameter, XRESTART, has been left unchanged.  When either XRESTART
+      or XHDF is set to .TRUE., restart and/or visualization files will be
+      read/written according to whether HDF or HDF5 was selected at compilation
+      time, based upon CPP macros described below.
+
+      *** YOU WILL NEED TO EDIT YOUR OWN ZMP_INP NAMELISTS TO REMOVE XHDF4 AND
+          XHDF5 AND REPLACE THEM WITH XHDF!!! ***
+
+   d) Rules for defining the CPP macros are as follows:
+      i) Adding "-DUSE_HDF4" to ZMP_CPP configures hdfall.F and msave.F in the
+         traditional fashion: subroutine HDFALL writes HDF files and subroutines
+         MSAVE/MGET write/read restart files in binary format.
+      ii) Adding "-DUSE_HDF5" to ZMP_CPP configures subroutines HDFALL and
+          MSAVE/MGET for HDF5 format.
+      iii) Omitting both USE_HDF4 and USE_HDF5 causes subroutines MSAVE/MGET
+           to adopt the traditional binary format for restart files.
+      iv) Omitting both USE_HDF4 and USE_HDF5 causes subroutine HDFALL to
+          be configured as an empty routine.
+
+      *** HEY!! THIS NEXT ONE IS REALLY IMPORTANT!! ***
+
+      v) If both USE_HDF4 and USE_HDF5 are defined in the Makefile, the code
+         thus compiled will print an error message to TTY and abort.
+
+==============================================================================
+==============================================================================

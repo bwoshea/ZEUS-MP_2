@@ -1,0 +1,155 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+</head>
+<body style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 112);"
+ alink="#ccccff" link="#0000ff" vlink="#000088">
+<table bgcolor="#000000" width="100%" border="2">
+  <tbody>
+    <tr>
+      <th align="center"><font color="#00f000">
+      <h2>User Guide Part 2: Building ZEUS-MP </h2>
+      </font> <br>
+      <font color="#ff0000">Author: John Hayes</font> </th>
+    </tr>
+  </tbody>
+</table>
+<br>
+<br>
+<h3>NOTE:</h3>
+Unlike Version 1.0, ZEUS-MP Version 2 <b>REQUIRES A FORTRAN 90
+COMPILER.</b>
+<h3>The Tar File Directory Tree</h3>
+Upon untarring the tar file, the user will see a top-level directory
+named
+"zeusmp2". Under zeusmp2 are 4 subdirectories:
+<ul>
+  <li> src90: containing all ZEUS-MP source code files and Makefiles </li>
+  <li> exe90: containing the zeusmp.x executable (once built), input
+file(s) required for execution, and any output files produced. </li>
+  <li> test: containing input data decks for some example test problems
+  </li>
+  <li> pp: containing a minimal post-processing code for concatenating
+local output files written by each processor.
+<!--   <LI> MGLIB: containing the compiled MGMPI library (once built). --></li>
+</ul>
+<br>
+<b><font size="4">Customizing the Makefile</font></b><br>
+<p>
+To compile ZEUS-MP, one needs to have a copy of "Makefile" in place in
+the
+src90 subdirectory. A sophisticated Makefile-building script is not
+currently
+in place, although one may be offered in a future release. Two currently
+valid example Makefiles are provided in the 2.0.0 tarball.  <b>Makefile.sdsc.datastar</b>
+is valid on <a href="http://www.npaci.edu/DataStar" target="dstar">DataStar</a>
+at the <a href="http://www.sdsc.edu" target="sdsc">San Diego Supercomputing
+Center</a>. <b>Makefile.nersc.seaborg</b> is valid on 
+<a href="http://www.nersc.gov/nusers/resources/SP/">Seaborg</a> at
+<a href="http://www.nersc.gov">National Energy Research Scientific Computing Center</a>.
+To create a working Makefile on your machine, use one of the provided Makefiles
+as a template and edit the following environment variables set in the
+Makefile: <br>
+<br>
+<ul>
+  <li>ZMP_EXE -- The relative path of the zeusmp.x executable. </li>
+  <li>ZMP_CPP -- Contains CPP macros used to configure the code. </li>
+  <li>ZMP_FC -- The name of the Fortran 90 compiler. </li>
+  <li>ZMP_CC -- The name of the C compiler. </li>
+  <li>ZMP_MOD -- The relative path to the directory containing the
+".mod" F90 module objects generated during compilation of the ZEUS
+fortran routines. </li>
+  <li>ZMP_OPTS -- Fortran compiler options. </li>
+  <li>ZMP_LIB -- The absolute path to system libraries (e.g. HDF4). </li>
+  <li>ZMP_LDR -- The command invoked to link the object files.
+</ul>
+</p>
+<b><font size="4"><br>
+Including MGMPI<br>
+</font></b><br>
+ZEUS-MP supports the use of the MGMPI elliptic linear system solver for
+the solution of Poisson's equation for problems that include
+self-gravity on 3D Cartesian meshes with non-periodic boundary
+conditions. The use of MGMPI in ZEUS-MP is enabled at compilation time
+by including the string, "-DUSE_MGMPI" in the ZMP_CPP definition line.
+In this case, the loader will look in the src90 subdirectory for a
+binary file called "libdmgmpi.a" This file is not included in the
+ZEUS-MP distribution, but rather must be built separately from the
+MGMPI source code, which may be obtained <a
+ href="http://cosmos.ucsd.edu/mgmpi/" target="mgmpi">here</a>.
+<br>
+<br>
+If MGMPI is not used (USE_MGMPI is left undefined), then ZEUS-MP will
+default to the 3D conjugate gradient linear solver for 3D non-periodic
+meshes. Current (November 2005) research suggests that MGMPI will
+perform better than the CG solver once the mesh size exceeds 256<sup>3</sup>.
+<br>
+<p>
+</p>
+<b><font size="4">The FFTw Gravity Solver Libraries</font></b><br>
+<br>
+Compiling the code with the FFTw solver enabled requires that the Makefile
+be edited such that:
+<ol>
+   <li> The string <b>-DFFT</b> be appended to the <b>ZMP_CPP</b>
+        definition.</li>
+   <li> C routines <b>fftw_ps.c</b> and <b>fftw_plan.c</b> be included
+        in the COBJ file list.</li>
+</ol>
+<p>
+<b>Makefile.sdsc.datastar</b> provides an example of a Makefile properly
+configured to include the needed ZEUS-MP source files and the system
+library files on Datastar.  <b>Makefile.nersc.seaborg</b> is written with
+all FFT references eliminated and thus provides a template for machines
+on which the FFTw libraries are absent.
+</p>
+<p>
+</p>
+<h3>Compilation</h3>
+With a proper Makefile, the command <b>make compile</b> is used to
+compile the code (<b>gmake</b> may also be used). During compilation,
+each fortran file with
+a ".F" suffix is processed by the C preprocessor, which generates a
+corresponding file with a ".f" suffix. These processed files are then
+used to create object files which are subsequently linked into the
+executable.
+<p><b> Desired changes to any subroutine must be applied to the ".F"
+copy of that routine.</b>
+</p>
+<h3>Comments:</h3>
+<ul>
+  <li>The primary use of the C preprocessor is to expose/hide sections
+of the
+code
+to/from the compiler. The majority of macros defined in the ZMP_CPP
+variable
+pertain to MPI, and they are easily identified since "MPI" appears in
+the
+character string of each macro. Leaving "-DMPI_USED" out of the ZMP_CPP
+macro
+line causes all MPI code to be hidden from the compiler; in this way
+ZEUS-MP
+can be compiled as a serial code on systems which don't have MPI. </li>
+  <li>The name of the subroutines which handle initialization specific
+to the problem
+and restarting a run for that particular problem are specified by the
+"PROBLEM"
+and "PROBRES" CPP macros, respectively. For example, to run the sod
+shock test
+included with the code, your ZMP_CPP line must include "-DPROBLEM=sod"
+and would
+also include "-DPROBRES=sodres" in the unlikely event that you need to
+continue
+the Sod test from a restart file. </li>
+  <li>The MGMPI multigrid Poisson solver is available as a separate
+package
+from the <a href="http://cosmos.ucsd.edu/mgmpi/" target="mgmpi">MGMPI Web page.</a>
+It must be built as a separate library and included in the link path if
+it
+is to be used. When building ZEUS-MP, all references to MGMPI can be
+hidden from the compiler by leaving the "USE_MGMPI" CPP macro
+undefined,
+so it is not necessary to download MGMPI to use ZEUS-MP.</li>
+</ul>
+</body>
+</html>

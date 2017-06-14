@@ -1,0 +1,52 @@
+<HTML>
+<HEAD>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFF70" LINK="#0000FF" VLINK="#000088" ALINK="#CCCCFF">
+
+<A NAME="top">
+<CENTER>
+<TABLE border=5 bgcolor="#000000">
+<TR><TH align=center><FONT color="#00FF00">
+<h2>Pressureless Gravitational Collapse</h2>
+</FONT>
+<BR><FONT color=#FF0000>Author: John Hayes</FONT>
+</TH></TR>
+</TABLE>
+</CENTER>
+
+<br>
+<br>
+<h4>Description</h4>
+
+<P>
+A uniform sphere of unit density and initial radius of 1 cm collapses in free fall.
+The gravitational constant (GUNIV) was set equal to 1.0 for this test.  Artificial
+viscosity is also zeroed (QCON=0.0).  The figure below was generated from a time
+slice dumped at t = 0.535 sec, which is 0.985 free-fall times.
+
+<br>
+<br>
+<center>
+<img src="./GCOL.png">
+</center>
+
+<br>
+<br>
+The subroutine which initializes this problem is available <a href="./gcollapse.F">here.</a>
+
+<br>
+<br>
+The zmp_inp file used to configure the code is available <a href="./zmp_inp">here.</a>
+
+<br>
+<br>
+The ASCII data file from which the figure was generated is available <a href="./usraa000000.001">here.</a>
+
+<br>
+<br>
+The IDL program used to create the image is available <a href="./gcol.pro">here.</a>
+It calls a subprogram available <a href="./fsc_color.pro">here.</a>
+
+</BODY>
+</HTML>

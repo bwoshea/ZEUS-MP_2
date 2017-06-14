@@ -1,0 +1,30 @@
+ds100 % zmp_pp.x
+
+ZMP_PP: Welcome to the ZEUS-MP Post-Processor!
+
+ZMP_PP: What task would you like performed?
+ZMP_PP: Choose from:  hsplice, auto_hsplice, quit
+
+hsplice
+HSPLICE: ntiles is      2     2     1
+
+HSPLICE: id is aa
+HSPLICE: nx1z,nx2z,nx3z are    128    64     1
+
+HSPLICE: Enter desired dump number; <0 quits:
+
+0
+
+HSPLICE: Enter desired dump number; <0 quits:
+
+1 
+
+HSPLICE: Enter desired dump number; <0 quits:
+
+-1
+
+ZMP_PP: What task would you like performed?
+ZMP_PP: Choose from:  hsplice, auto_hsplice, quit
+
+quit
+ds100 %

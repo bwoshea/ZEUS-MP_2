@@ -1,0 +1,337 @@
+#=======================================================================
+#
+#
+#  DataStar MAKEFILE FOR ZEUS-MP (includes FFTw libraries)
+#
+#  NOTE:  This Makefile includes references to the FFTw 2.1.5 system
+#         library file on Datastar.  To actually compile ZEUS-MP with
+#         the FFT solver enabled, the string "-DFFT" must be added to
+#         the ZMP_CPP definition below (line 42).
+#
+#
+#-------------------  macro definitions  -------------------------------
+#
+all: compile
+ZMP_EXE   = ../exe90/
+ZMP_MOD   = ./
+ZMP_FC    = mpxlf90 -qfixed=72 -q64
+FFTW_PATH = /usr/local/apps/fftw215d
+#-----------------------------------------------------------------------
+# Uncomment the next line to compile with agressive optimization
+ZMP_OPTS  = -c -O3 -qstrict -qtune=auto -qarch=auto \
+            -I$(FFTW_PATH)/include
+#
+# Uncomment the next line to compile with debugging enabled and optimization disabled
+#ZMP_OPTS  = -c -g -qtune=auto -qarch=auto -qinitauto=7FF7FFFF -qflttrap=zero:ov:inv:en -qcheck \
+#            -I$(FFTW_PATH)/include
+#-----------------------------------------------------------------------
+ZMP_CC    = mpcc -c -I$(FFTW_PATH)/include -q64
+ZMP_LDR   = mpCC_r -q64
+HDF4_PATH = /usr/local/apps/hdf/4.2r0-aix-64
+#-----------------------------------------------------------------------
+# If libdmgmpi.a exists in src90, use the first definition of MGMPI_LIB.
+# If MGMPI is not used at all, use the second definition.  If the library
+# is located elsewhere, customize the first definition as needed.
+#MGMPI_LIB = -L./ -ldmgmpi
+MGMPI_LIB = -L./
+#-----------------------------------------------------------------------
+ZMP_LIB   = -L/usr/local/apps/mass -lmass \
+            ${MGMPI_LIB} -L${HDF4_PATH}/lib -lmfhdf -ldf -ljpeg -lz -lsz \
+            -lg -lxlf90 -lxlopt -lxlf -lxlomp_ser -lm -lm \
+            -L$(FFTW_PATH)/lib -lrfftw_mpi -lfftw_mpi -lrfftw -lfftw -lmpi
+ZMP_CPP   = /lib/cpp -DPROBLEM=blast -DPROBRES=empty \
+            -DMPI_USED -DARCH_IBM -DUSE_HDF4 \
+            -DMPI_FLOAT=MPI_DOUBLE_PRECISION -DMPI_2FLOAT=MPI_2DOUBLE_PRECISION
+#
+#--------------------  implicit rules  ---------------------------------
+#
+.SUFFIXES: .F .f .c .o
+
+.f.o:
+	${ZMP_CPP} -P $*.F | tr -s "" "\012" > $*.f
+	${ZMP_FC} -I ${ZMP_MOD} ${ZMP_OPTS} $*.f
+
+.F.o:
+	${ZMP_CPP} -P $*.F | tr -s "" "\012" > $*.f
+	${ZMP_FC} -I ${ZMP_MOD} ${ZMP_OPTS} $*.f
+
+.c.o:
+	${ZMP_CC} -c $<
+
+#
+#-------------------  Fortran object files  ----------------------------
+#
+FOBJ = mod_files.o advx1.o advx2.o advx3.o alloc_arrays.o avisc.o avisc_d.o bndyflgs.o bval3d.o bvalabuns.o bvalemf.o bvalt.o cgsolve.o clocks.o configure.o ct.o ct_1D.o ct_2D.o dataio.o difco1.o difco2.o difco3.o diverg.o dprd.o empty.o eos_d.o eos.o fftwgrav.o findno.o forces.o forces_d.o ggen.o gpbv.o gravity.o gravmg.o grav2dcg.o grav3dcg.o grdv.o hdfall.o hsmoc.o hsmoc_1D.o hsmoc_2D.o grey_fld.o intchk.o jacob.o lorentz.o lorentz_1D.o lorentz_2D.o lorentz_d.o mapin.o mapout.o matprop.o mnmx.o momx1.o momx2.o momx3.o msave.o msendrec.o mstart.o mul_sym.o offdiag.o newdt.o newgrid.o newvg.o newx1.o newx2.o newx3.o nudt.o opac_d.o opacity.o options.o pdv.o pdv_d.o rad_imp_dt.o rad_solve.o restart.o sendrec.o setup.o srcstep.o strtoi.o sym_diag.o sym_prcn.o transprt.o transprt_1D.o transprt_2D.o tranx1.o tranx2.o tranx3.o updtmtrxbnd.o updtvecbnd.o zeusmp.o gcollapse.o textdmp.o  linpck.o sod.o blast.o sedov.o stream.o rshock.o mhdshktube.o rotor.o noh.o marshak.o
+#
+#-------------------  C object files  ----------------------------------
+#
+COBJ = bcdflt.o checkin.o fftw_ps.o fftwplan.o
+#
+#---------------------  targets  ---------------------------------------
+#
+help:
+	@echo Type "'make help'             to see this menu"
+	@echo Type "'make compile           to create executable
+	@echo Type "'make clean'            to remove '*.f' and '*.o' files"
+	@echo Type "'make cleaner'          to remove '*.f' '*.o' "
+	@echo "                             ${ZMP_EXE}zmp_inp ${ZMP_EXE}zeusmp.x"
+	@echo Type "'make listing'          to create listing of code"
+#
+#-----------------------------------------------------------------------
+#
+NPFOBJ = setup.f restart.f textdmp.f forces.f hdfall.f opacity.f matprop.f bval3d.f difco1.f difco2.f difco3.f
+NPOOBJ = setup.o restart.o textdmp.o forces.o hdfall.o opacity.o matprop.o bval3d.o difco1.o difco2.o difco3.o
+
+newprob:
+	\rm -f ${NPFOBJ} ${NPOOBJ}
+#
+#-----------------------------------------------------------------------
+#
+clean:
+	echo "\rm -f *.o *.f *.mod"
+	\rm -f *.o *.f *.mod
+#
+#-----------------------------------------------------------------------
+#
+cleaner:
+	echo "\rm -f *.o *.f *.mod  ${ZMP_EXE}zmp_inp ${ZMP_EXE}zeusmp.x"
+	\rm -f *.o *.f  ${ZMP_EXE}zmp_inp ${ZMP_EXE}zeusmp.x
+#
+#-----------------------------------------------------------------------
+#
+listing:
+	echo "cat Makefile  *.h *.F *.c > listing"
+	cat Makefile  *.h *.F *.c > listing
+#
+#-----------------------------------------------------------------------
+#
+compile: ${ZMP_EXE}zeusmp.x
+
+${ZMP_EXE}zeusmp.x: ${FOBJ} ${COBJ}
+	${ZMP_LDR} -o ${ZMP_EXE}zeusmp.x ${FOBJ} ${COBJ} ${ZMP_LIB}
+
+#
+#----------------------  dependencies  ---------------------------------
+#
+mod_files.o: mod_files.F 
+
+advx1.o: advx1.F mod_files.o  
+
+advx2.o: advx2.F mod_files.o  
+
+advx3.o: advx3.F mod_files.o  
+
+alloc_arrays.o: alloc_arrays.F mod_files.o
+
+avisc.o: avisc.F mod_files.o  
+
+avisc_d.o: avisc_d.F mod_files.o  
+
+bndyflgs.o: bndyflgs.F mod_files.o  
+
+bval3d.o: bval3d.F mod_files.o  
+
+bvalabuns.o: bvalabuns.F mod_files.o  
+
+bvalemf.o: bvalemf.F mod_files.o  
+
+bvalt.o: bvalt.F mod_files.o  
+
+cgsolve.o: cgsolve.F mod_files.o
+
+clocks.o: clocks.F mod_files.o  
+
+configure.o: configure.F mod_files.o  
+
+ct.o: ct.F mod_files.o  
+
+ct_1D.o: ct_1D.F mod_files.o  
+
+ct_2D.o: ct_2D.F mod_files.o  
+
+dataio.o: dataio.F mod_files.o  
+
+difco1.o: difco1.F mod_files.o
+
+difco2.o: difco2.F mod_files.o
+
+difco3.o: difco3.F mod_files.o
+
+diverg.o: diverg.F mod_files.o  
+
+dprd.o: dprd.F mod_files.o
+
+empty.o: empty.F  
+
+eos_d.o: eos_d.F mod_files.o
+
+eos.o: eos.F mod_files.o
+
+fftwgrav.o: fftwgrav.F mod_files.o
+
+findno.o: findno.F  
+
+forces.o: forces.F mod_files.o  
+
+forces_d.o: forces_d.F mod_files.o  
+
+fourn.o: fourn.F  
+
+ggen.o: ggen.F mod_files.o  
+
+gravity.o: gravity.F mod_files.o  
+
+gravmg.o: gravmg.F mod_files.o  
+
+grav2dcg.o: grav2dcg.F mod_files.o  
+
+grav3dcg.o: grav3dcg.F mod_files.o  
+
+grdv.o: grdv.F mod_files.o
+
+gpbv.o: gpbv.F mod_files.o
+
+grdv.o: grdv.F mod_files.o  
+
+hdfall.o: hdfall.F mod_files.o  
+
+hsmoc.o: hsmoc.F mod_files.o  
+
+hsmoc_1D.o: hsmoc_1D.F mod_files.o  
+
+hsmoc_2D.o: hsmoc_2D.F mod_files.o  
+
+grey_fld.o: grey_fld.F mod_files.o
+
+intchk.o: intchk.F mod_files.o  
+
+jacob.o: jacob.F mod_files.o
+
+lorentz.o: lorentz.F mod_files.o  
+
+lorentz_1D.o: lorentz_1D.F mod_files.o  
+
+lorentz_2D.o: lorentz_2D.F mod_files.o  
+
+lorentz_d.o: lorentz_d.F mod_files.o  
+
+mapin.o: mapin.F mod_files.o  
+
+mapout.o: mapout.F mod_files.o  
+
+matprop.o: matprop.F mod_files.o
+
+msendrec.o: msendrec.F mod_files.o
+
+mnmx.o: mnmx.F mod_files.o  
+
+momx1.o: momx1.F mod_files.o  
+
+momx2.o: momx2.F mod_files.o  
+
+momx3.o: momx3.F mod_files.o  
+
+msave.o: msave.F mod_files.o  
+
+mstart.o: mstart.F mod_files.o  
+
+mul_sym.o: mul_sym.F mod_files.o
+
+newdt.o: newdt.F mod_files.o  
+
+newgrid.o: newgrid.F  mod_files.o
+
+newvg.o: newvg.F mod_files.o
+
+newx1.o: newx1.F mod_files.o
+
+newx2.o: newx2.F mod_files.o
+
+newx3.o: newx3.F mod_files.o
+
+nudt.o: nudt.F mod_files.o  
+
+offdiag.o: offdiag.F mod_files.o
+
+opac_d.o: opac_d.F mod_files.o
+
+opacity.o: opacity.F mod_files.o
+
+options.o: options.F mod_files.o 
+
+pdv.o: pdv.F mod_files.o  
+
+pdv_d.o: pdv_d.F mod_files.o  
+
+rad_imp_dt.o: rad_imp_dt.F mod_files.o
+
+rad_solve.o: rad_solve.F mod_files.o
+
+restart.o: restart.F mod_files.o  
+
+sendrec.o: sendrec.F mod_files.o
+
+setup.o: setup.F mod_files.o  
+
+srcstep.o: srcstep.F mod_files.o  
+
+strtoi.o: strtoi.F  
+
+sym_diag.o: sym_diag.F mod_files.o
+
+sym_prcn.o: sym_prcn.F mod_files.o
+
+tmul_sym.o: tmul_sym.F mod_files.o
+
+transprt.o: transprt.F mod_files.o  
+
+transprt_1D.o: transprt_1D.F mod_files.o  
+
+transprt_2D.o: transprt_2D.F mod_files.o  
+
+tranx1.o: tranx1.F mod_files.o  
+
+tranx2.o: tranx2.F mod_files.o  
+
+tranx3.o: tranx3.F mod_files.o  
+
+updtmtrxbnd.o: updtmtrxbnd.F mod_files.o  
+
+updtvecbnd.o: updtvecbnd.F mod_files.o  
+
+zeusmp.o: zeusmp.F mod_files.o  
+
+textdmp.o: textdmp.F mod_files.o  
+
+linpck.o: linpck.F mod_files.o  
+
+bcdflt.o: bcdflt.c  
+
+checkin.o: checkin.c  
+
+rotor.o: rotor.F mod_files.o  
+
+mhdshktube.o: mhdshktube.F mod_files.o  
+
+mhdvortex.o: mhdvortex.F mod_files.o  
+
+blast.o: blast.F mod_files.o  
+
+gcollapse.o: gcollapse.F mod_files.o  
+
+sedov.o: sedov.F mod_files.o  
+
+sod.o: sod.F mod_files.o  
+
+stream.o: stream.F mod_files.o
+
+marshak.o: marshak.F mod_files.o
+
+rshock.o: rshock.F mod_files.o
+
+noh.o: noh.F mod_files.o
+
+fftw_ps.o: fftw_ps.c
+
+fftwplan.o: fftwplan.c
+

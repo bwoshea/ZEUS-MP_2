@@ -1,0 +1,382 @@
+#ifndef MGMPI_DEF
+#define MGMPI_DEF
+
+/* # define TRACE_ALLOCATION */
+
+/*****************************************************************************/
+/*                                                                           */
+/* File:        mgmpi.def                                                    */
+/*                                                                           */
+/* Description: Global defines                                               */
+/*                                                                           */
+/*---------------------------------------------------------------------------*/
+/*                                                                           */
+/* Author:      James Bordner                                                */
+/*                                                                           */
+/* © 1997-2000 Board of Trustees of the University of Illinois. */
+/* © 2000-2003 Regents of the University of California.         */
+/*                                                                           */
+/*****************************************************************************/
+
+/*------------------------------------------------------------------------*/
+/* Versions                                                               */
+/*------------------------------------------------------------------------*/
+
+/* *** See also $(MGMPI)/VERSION *** */
+
+#define MGMPI_VERSION_MAJOR 1
+#define MGMPI_VERSION_MINOR 0
+#define MGMPI_VERSION_REVISION 9
+
+/*------------------------------------------------------------------------*/
+/* Prefixes for user interface */
+/*------------------------------------------------------------------------*/
+
+/* C/Fortran/private global function prefixes (private global?!) */
+
+#ifdef NOT_GNU_CPP
+#   define C_FUNCTION_PREFIX(X) MGMPI_/**/X
+#   define FC_FUNCTION_PREFIX(X) mgmpi_/**/X
+#   define FF_FUNCTION_PREFIX(X) mgmpi_ X
+#   define XC_FUNCTION_PREFIX(X) mgmpilocal_/**/X
+#   define XF_FUNCTION_PREFIX(X) mgmpilocal_ X
+#   define c_function_prefix(X) MGMPI_/**/X
+#   define fc_function_prefix(X) 'mgmpi_/**/X'
+#   define ff_function_prefix(X) 'mgmpi_ X'
+#   define xc_function_prefix(X) mgmpilocal_/**/X
+#   define xf_function_prefix(X) mgmpilocal_ X
+#else
+#   define C_FUNCTION_PREFIX(X) MGMPI_##X
+#   define FC_FUNCTION_PREFIX(X) mgmpi_##X
+#   define FF_FUNCTION_PREFIX(X) mgmpi_ X
+#   define XC_FUNCTION_PREFIX(X) mgmpilocal_##X
+#   define XF_FUNCTION_PREFIX(X) mgmpilocal_ X
+#   define c_function_prefix(X) MGMPI_##X
+#   define fc_function_prefix(X) mgmpi_##X
+#   define ff_function_prefix(X) mgmpi_ X
+#   define xc_function_prefix(X) mgmpilocal_##X
+#   define xf_function_prefix(X) mgmpilocal_ X
+#endif
+
+/*----------------------- */
+/* Fortran/C interface    */
+/*----------------------- */
+
+#if defined (_IBM_)
+#  define FORTRAN(sub,SUB) sub
+#  define FC_FUNCTION(sub,SUB) fc_function_prefix(sub)
+#  define FF_FUNCTION(sub,SUB) ff_function_prefix(sub)
+#  define XC_FUNCTION(sub,SUB) xc_function_prefix(sub)
+#  define XF_FUNCTION(sub,SUB) xf_function_prefix(sub)
+#  define FF_FUNCTION_PRECISION(sub,SUB) sub
+#  define FC_FUNCTION_PRECISION(sub,SUB) sub
+#else
+#   if defined (NOT_GNU_CPP)
+#     define FORTRAN(sub,SUB) sub/**/_
+#     define FC_FUNCTION(sub,SUB) fc_function_prefix(sub/**/_)
+#     define FF_FUNCTION(sub,SUB) ff_function_prefix(sub/**/_)
+#     define XC_FUNCTION(sub,SUB) xc_function_prefix(sub/**/_)
+#     define XF_FUNCTION(sub,SUB) xf_function_prefix(sub/**/_)
+#     define FF_FUNCTION_PRECISION(sub,SUB) sub _
+#     define FC_FUNCTION_PRECISION(sub,SUB) sub/**/_
+#   else
+#     define FORTRAN(sub,SUB) sub##_
+#     define FC_FUNCTION(sub,SUB) fc_function_prefix(sub##_)
+#     define FF_FUNCTION(sub,SUB) ff_function_prefix(sub##_)
+#     define XC_FUNCTION(sub,SUB) xc_function_prefix(sub##_)
+#     define XF_FUNCTION(sub,SUB) xf_function_prefix(sub##_)
+#     define FF_FUNCTION_PRECISION(sub,SUB) sub _
+#     define FC_FUNCTION_PRECISION(sub,SUB) sub##_
+#   endif
+#endif
+
+
+#  define C_FUNCTION(sub) c_function_prefix(sub)
+
+
+#ifdef __cplusplus
+#   define HEADER(body) extern "C" { body; } body
+#else
+#   define HEADER(body) body;
+#endif
+
+/*------------------------------------- */
+/* Debugging                            */
+/*------------------------------------- */
+
+/* #define TRACE_MEMORY */
+
+/*---------------------------------------------------------------------
+* Whether to define coarse grid in terms of every other unknown or
+* every other vertex.  Every other vertex leads to smaller coarse grids
+* but less accurate boundary conditions; every other unknown leads
+* to more accurate boundary conditions, but larger (and nonuniform at
+* the boundaries) coarse grids.
+*
+* Use COARSEN_VERTICES; others are experimental
+*---------------------------------------------------------------------*/
+
+#define COARSEN_VERTICES
+/* #define COARSEN_UNKNOWNS */
+/* #define COARSEN_PERIODIC */
+
+/*---------------------------------------------------------------------
+* Symbolic constants
+*---------------------------------------------------------------------*/
+
+/* Boundary condition types */
+
+/* DON'T CHANGE VALUES! */
+
+#define MGMPI_BC_UNKNOWN   0
+#define MGMPI_BC_DIRICHLET 1
+#define MGMPI_BC_NEUMANN   2
+#define MGMPI_BC_PERIODIC  3
+
+/* Face labels */
+
+/* DON'T CHANGE VALUES! */
+
+#define MGMPI_FACE_LOWER_X 0
+#define MGMPI_FACE_LOWER_Y 1
+#define MGMPI_FACE_LOWER_Z 2
+
+#define MGMPI_FACE_UPPER_X 3
+#define MGMPI_FACE_UPPER_Y 4
+#define MGMPI_FACE_UPPER_Z 5
+
+#define MGMPI_FACE_FIRST 0
+#define MGMPI_FACE_LAST 5
+
+/* Axis labels */
+
+#define MGMPI_AXIS_X 0
+#define MGMPI_AXIS_Y 1
+#define MGMPI_AXIS_Z 2
+
+/* Solver status labels */
+
+#define MGMPI_SOLVER_STATUS_CONVERGED               0
+#define MGMPI_SOLVER_STATUS_UNKNOWN                 1
+#define MGMPI_SOLVER_STATUS_ITERATION_LIMIT_REACHED 2
+#define MGMPI_SOLVER_STATUS_TIME_LIMIT_REACHED      3
+#define MGMPI_SOLVER_STATUS_STALLED                 4
+#define MGMPI_SOLVER_STATUS_DIVERGED                5
+
+/*  ----------------------------------------------------------------- */
+/* Reduction operations ala MPI */
+/*  ----------------------------------------------------------------- */
+
+#define MGMPI_MIN 0
+#define MGMPI_MAX 1
+#define MGMPI_SUM 2
+#define MGMPI_PROD 3
+
+/*    ----------------------------------------------------------------- */
+/*    Allocation (NEW) defines                                          */
+/*    ----------------------------------------------------------------- */
+
+#ifdef TRACE_ALLOCATION
+
+#   define NEW_ARRAY(_POINTER,_SIZE,_TYPE) \
+      _POINTER = new _TYPE [_SIZE]; \
+      printf ("TRACE NEW_ARRAY: %s:%d %p %d\n", \
+         __FILE__,__LINE__,_POINTER,_SIZE); \
+      Global::memory.New(_POINTER,(_SIZE)*sizeof(_TYPE))
+#   define NEW0(_POINTER,_TYPE) \
+      _POINTER = new _TYPE; \
+      printf ("TRACE NEW0: %s:%d %p\n", \
+         __FILE__,__LINE__,_POINTER); \
+      Global::memory.New(_POINTER,sizeof(_TYPE))
+#   define NEW1(_POINTER,_TYPE,_ARG1) \
+      _POINTER = new _TYPE (_ARG1); \
+      printf ("TRACE NEW1: %s:%d %p\n", \
+         __FILE__,__LINE__,_POINTER); \
+      Global::memory.New(_POINTER,sizeof(_TYPE))
+#   define NEW2(_POINTER,_TYPE,_ARG1,_ARG2) \
+      _POINTER = new _TYPE (_ARG1,_ARG2); \
+      printf ("TRACE NEW2: %s:%d %p\n", \
+         __FILE__,__LINE__,_POINTER); \
+      Global::memory.New(_POINTER,sizeof(_TYPE))
+#   define NEW3(_POINTER,_TYPE,_ARG1,_ARG2,_ARG3) \
+      _POINTER = new _TYPE (_ARG1,_ARG2,_ARG3); \
+      printf ("TRACE NEW3: %s:%d %p\n", \
+         __FILE__,__LINE__,_POINTER); \
+      Global::memory.New(_POINTER,sizeof(_TYPE))
+#   define NEW4(_POINTER,_TYPE,_ARG1,_ARG2,_ARG3,_ARG4) \
+      _POINTER = new _TYPE (_ARG1,_ARG2,_ARG3,_ARG4); \
+      printf ("TRACE NEW4: %s:%d %p\n", \
+         __FILE__,__LINE__,_POINTER); \
+      Global::memory.New(_POINTER,sizeof(_TYPE))
+#   define NEW5(_POINTER,_TYPE,_ARG1,_ARG2,_ARG3,_ARG4,_ARG5) \
+      _POINTER = new _TYPE (_ARG1,_ARG2,_ARG3,_ARG4,_ARG5); \
+      printf ("TRACE NEW5: %s:%d %p\n", \
+         __FILE__,__LINE__,_POINTER); \
+      Global::memory.New(_POINTER,sizeof(_TYPE))
+#   define NEW6(_POINTER,_TYPE,_ARG1,_ARG2,_ARG3,_ARG4,_ARG5,_ARG6) \
+      _POINTER = new _TYPE (_ARG1,_ARG2,_ARG3,_ARG4,_ARG5,_ARG6); \
+      printf ("TRACE NEW6: %s:%d %p\n", \
+         __FILE__,__LINE__,_POINTER); \
+      Global::memory.New(_POINTER,sizeof(_TYPE))
+#   define NEW8(_POINTER,_TYPE,_ARG1,_ARG2,_ARG3,_ARG4,_ARG5,\
+      _ARG6,_ARG7,_ARG8) \
+      _POINTER = new _TYPE (_ARG1,_ARG2,_ARG3,_ARG4,_ARG5,\
+      _ARG6,_ARG7,_ARG8); \
+      printf ("TRACE NEW8: %s:%d %p\n", \
+         __FILE__,__LINE__,_POINTER); \
+      Global::memory.New(_POINTER,sizeof(_TYPE))
+#   define NEW9(_POINTER,_TYPE,_ARG1,_ARG2,_ARG3,_ARG4,_ARG5,\
+      _ARG6,_ARG7,_ARG8,_ARG9) \
+      _POINTER = new _TYPE (_ARG1,_ARG2,_ARG3,_ARG4,_ARG5,\
+      _ARG6,_ARG7,_ARG8,_ARG9); \
+      printf ("TRACE NEW9: %s:%d %p\n", \
+         __FILE__,__LINE__,_POINTER); \
+      Global::memory.New(_POINTER,sizeof(_TYPE))
+
+#   define NEW12(_POINTER,_TYPE,_ARG1,_ARG2,_ARG3,_ARG4,_ARG5,\
+      _ARG6,_ARG7,_ARG8,_ARG9,_ARG10,_ARG11,_ARG12) \
+      _POINTER = new _TYPE (_ARG1,_ARG2,_ARG3,_ARG4,_ARG5,\
+      _ARG6,_ARG7,_ARG8,_ARG9,_ARG10,_ARG11,_ARG12); \
+      printf ("TRACE NEW12: %s:%d %p\n", \
+         __FILE__,__LINE__,_POINTER); \
+      Global::memory.New(_POINTER,sizeof(_TYPE))
+
+#   define DELETE(_POINTER) \
+      if (_POINTER) {Global::memory.Delete (_POINTER); \
+      printf ("TRACE DELETE: %s:%d %p\n", \
+         __FILE__,__LINE__,_POINTER); \
+      delete _POINTER; _POINTER=0;}
+
+#   define DELETE_REFERENCE(_REFERENCE) \
+      Global::memory.Delete (&_REFERENCE); \
+      printf ("TRACE DELETE_REFERENCE: %s:%d %p\n", \
+         __FILE__,__LINE__,&_REFERENCE); \
+      delete &_REFERENCE
+
+#   define DELETE_ARRAY(_POINTER) \
+      if (_POINTER) {Global::memory.Delete (_POINTER); \
+      printf ("TRACE DELETE_ARRAY: %s:%d %p\n", \
+         __FILE__,__LINE__,_POINTER); \
+      delete [] _POINTER; _POINTER=0;}
+
+#else
+
+#   define NEW_ARRAY(_POINTER,_SIZE,_TYPE) \
+      _POINTER = new _TYPE [_SIZE]; \
+      Global::memory.New(_POINTER,(_SIZE)*sizeof(_TYPE))
+#   define NEW0(_POINTER,_TYPE) \
+      _POINTER = new _TYPE; \
+      Global::memory.New(_POINTER,sizeof(_TYPE))
+#   define NEW1(_POINTER,_TYPE,_ARG1) \
+      _POINTER = new _TYPE (_ARG1); \
+      Global::memory.New(_POINTER,sizeof(_TYPE))
+#   define NEW2(_POINTER,_TYPE,_ARG1,_ARG2) \
+      _POINTER = new _TYPE (_ARG1,_ARG2); \
+      Global::memory.New(_POINTER,sizeof(_TYPE))
+#   define NEW3(_POINTER,_TYPE,_ARG1,_ARG2,_ARG3) \
+      _POINTER = new _TYPE (_ARG1,_ARG2,_ARG3); \
+      Global::memory.New(_POINTER,sizeof(_TYPE))
+#   define NEW4(_POINTER,_TYPE,_ARG1,_ARG2,_ARG3,_ARG4) \
+      _POINTER = new _TYPE (_ARG1,_ARG2,_ARG3,_ARG4); \
+      Global::memory.New(_POINTER,sizeof(_TYPE))
+#   define NEW5(_POINTER,_TYPE,_ARG1,_ARG2,_ARG3,_ARG4,_ARG5) \
+      _POINTER = new _TYPE (_ARG1,_ARG2,_ARG3,_ARG4,_ARG5); \
+      Global::memory.New(_POINTER,sizeof(_TYPE))
+#   define NEW6(_POINTER,_TYPE,_ARG1,_ARG2,_ARG3,_ARG4,_ARG5,_ARG6) \
+      _POINTER = new _TYPE (_ARG1,_ARG2,_ARG3,_ARG4,_ARG5,_ARG6); \
+      Global::memory.New(_POINTER,sizeof(_TYPE))
+
+#   define NEW8(_POINTER,_TYPE,_ARG1,_ARG2,_ARG3,_ARG4,_ARG5,\
+      _ARG6,_ARG7,_ARG8) \
+      _POINTER = new _TYPE (_ARG1,_ARG2,_ARG3,_ARG4,_ARG5,\
+      _ARG6,_ARG7,_ARG8); \
+      Global::memory.New(_POINTER,sizeof(_TYPE))
+#   define NEW9(_POINTER,_TYPE,_ARG1,_ARG2,_ARG3,_ARG4,_ARG5,\
+      _ARG6,_ARG7,_ARG8,_ARG9) \
+      _POINTER = new _TYPE (_ARG1,_ARG2,_ARG3,_ARG4,_ARG5,\
+      _ARG6,_ARG7,_ARG8,_ARG9); \
+      Global::memory.New(_POINTER,sizeof(_TYPE))
+
+#   define NEW12(_POINTER,_TYPE,_ARG1,_ARG2,_ARG3,_ARG4,_ARG5,\
+      _ARG6,_ARG7,_ARG8,_ARG9,_ARG10,_ARG11,_ARG12) \
+      _POINTER = new _TYPE (_ARG1,_ARG2,_ARG3,_ARG4,_ARG5,\
+      _ARG6,_ARG7,_ARG8,_ARG9,_ARG10,_ARG11,_ARG12); \
+      Global::memory.New(_POINTER,sizeof(_TYPE))
+
+#   define DELETE(_POINTER) \
+      if (_POINTER) {Global::memory.Delete (_POINTER); \
+      delete _POINTER; _POINTER=0;}
+
+#   define DELETE_REFERENCE(_REFERENCE) \
+      Global::memory.Delete (&_REFERENCE); \
+      delete &_REFERENCE
+
+#   define DELETE_ARRAY(_POINTER) \
+      if (_POINTER) {Global::memory.Delete (_POINTER); \
+      delete [] _POINTER; _POINTER=0;}
+
+#endif
+
+/*    ----------------------------------------------------------------- */
+/*    MIN and MAX                                                       */
+/*    ----------------------------------------------------------------- */
+
+#ifndef _MIN_
+#   define _MIN_(a,b) (((a) < (b)) ? (a) : (b))
+#endif
+#ifndef _MAX_
+#   define _MAX_(a,b) (((a) > (b)) ? (a) : (b))
+#endif
+
+/*    ----------------------------------------------------------------- */
+/*    Row and column major orderings                                    */
+/*    ----------------------------------------------------------------- */
+
+#ifndef _INDEX3
+#   define _INDEX3(i0,i1,i2,n0,n1,n2) ((i0) + (n0)*((i1) + (n1)*(i2)))
+#endif
+
+#ifndef _INDEX2
+#   define _INDEX2(i0,i1,n0,n1)       ((i0) + (n0)*(i1))
+#endif
+
+#ifndef _INV_INDEX3
+#   define _INV_INDEX3(i,i0,i1,i2,n0,n1,n2) \
+      i0 = (i) % (n0); \
+      i = ((i)-(i0))/(n0); \
+      i1 = (i) % (n1); \
+      i2 = ((i)-(i1))/(n1)
+#endif
+
+/*    ----------------------------------------------------------------- */
+/*    Defines for when MPI is not used                                  */
+/*    ----------------------------------------------------------------- */
+
+#ifndef USE_MPI
+#   define MPI_PROC_NULL -1
+#   define MPI_COMM_NULL 0
+#   define MPI_COMM_WORLD 0
+#   define MPI_ANY_TAG 0
+#   define MPI_MIN 0
+#   define MPI_MAX 1
+#   define MPI_SUM 2
+#   define MPI_PROD 3
+#endif
+
+#ifdef NDEBUG
+#  define _TRACE 
+#  define _PTRACE(ip)
+#else
+#  define _TRACE \
+   if (trace) { \
+       printf ("TRACE: %s:%d\n",__FILE__,__LINE__); \
+       fflush(stdout); \
+   }
+#  define _PTRACE(ip) \
+   if (trace) { \
+      printf ("PTRACE(%d): %s:%d\n",ip,__FILE__,__LINE__); \
+      fflush(stdout); \
+   }
+#endif
+
+#endif
