@@ -2,7 +2,7 @@
 
 This repository contains the web page and source code for ZEUS-MP 2.  This code was originally written by Dr. John Hayes at the Laboratory for Computational Astrophysics at the University of Illinois at Urbana-Champaign (until 2000) and the University of California at San Diego (2000 onward), and is based on the numerical methods developed for previous versions of the ZEUS code.  The code capabilities and numerical methods are described in [Hayes et al. (1996), ApJ Supplement, 165, 188-228](http://adsabs.harvard.edu/abs/2006ApJS..165..188H).
 
-This repository is being maintained by Brian O'Shea ([oshea@msu.edu](mailto:oshea@msu.edu)) as a service to the community, since the server hosting the original ZEUS-MP 2 website is defunct and the code is not being actively developed.  Questions about the codebase should be directed to John Hayes ([jchayes63@gmail.com](jchayes63@gmail.com)), the primary author of ZEUS-MP 2.  
+This repository is being maintained by Brian O'Shea ([oshea@msu.edu](mailto:oshea@msu.edu)) as a service to the community, since the server hosting the original ZEUS-MP 2 website is defunct and the code is not being actively developed.  Questions about the codebase should be directed to John Hayes ([jchayes63@gmail.com](mailto:jchayes63@gmail.com)), the primary author of ZEUS-MP 2.  
 
 This repository contains two primary directories:
 
